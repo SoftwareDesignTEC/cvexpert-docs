@@ -1,0 +1,375 @@
+openapi: 3.0.3
+info:
+  title: CVExpert · Microservicio de Usuarios
+  version: 0.1.0-borrador
+  description: |
+    Borrador del contrato del microservicio de Usuarios para la Fase II.
+
+    Conserva las 7 operaciones que los clientes usan desde la Fase I (4 de perfil,
+    2 legales y 1 de ayuda). Las rutas y los nombres de campo no cambian, para que
+    los clientes solo cambien el backend detrás de APIM. Lo nuevo es lo siguiente:
+
+    - **Rol.** El perfil incluye `role` (`user` o `admin`). Es de solo lectura. Los
+      correos listados en la variable `ADMIN_EMAILS` quedan como `admin` al crear
+      su perfil. El primero es gcabrerarojas.25@gmail.com.
+    - **Fechas en epoch.** Todas las fechas viajan como milisegundos UTC (entero
+      `int64`). En la Fase I eran texto: los clientes deben ajustar `lastActiveAt`,
+      `effectiveDate` y `generatedAt`.
+    - **Identidad.** El servicio nunca recibe el token de Google. APIM lo valida y
+      agrega `X-User-Id` (claim `sub`) y `X-User-Email`. El backend solo acepta
+      llamadas que traen el certificado de cliente de APIM.
+
+    **Sobre `{id}` en `/profiles/{id}`.** En la Fase I la web usa el `sub` de Google
+    y Android usa el correo. Para no romper a ninguno, el servicio acepta cualquiera
+    de los dos, siempre que coincida con `X-User-Id` o con `X-User-Email`. Si no
+    coincide, responde 403. Internamente, el perfil se guarda por `sub`.
+    Se recomienda que Android pase a usar el `sub`.
+
+    **Rutas.** APIM publica `https://<apim>/api/v1/...` y reenvía al backend sin
+    el prefijo `/api/v1`.
+servers:
+  - url: https://gabriel-api-management.azure-api.net/api/v1
+    description: APIM (lo que ven los clientes)
+  - url: http://localhost:8080
+    description: Backend local (sin APIM)
+tags:
+  - name: Perfil
+  - name: Legales
+  - name: Ayuda
+
+paths:
+  /profiles/{id}:
+    parameters:
+      - $ref: '#/components/parameters/ProfileId'
+      - $ref: '#/components/parameters/XUserId'
+      - $ref: '#/components/parameters/XUserEmail'
+    get:
+      tags: [Perfil]
+      operationId: getProfile
+      summary: Obtener el perfil del usuario autenticado
+      description: |
+        Si el perfil todavía no existe, se crea en ese momento con el correo de
+        `X-User-Email`, el resto de campos vacíos y el rol que corresponda según
+        `ADMIN_EMAILS`. Por eso la primera llamada nunca da 404.
+      responses:
+        '200':
+          description: Perfil encontrado o recién creado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserProfile' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    put:
+      tags: [Perfil]
+      operationId: updateProfile
+      summary: Actualizar el perfil
+      description: |
+        Actualización parcial: solo cambian los campos que vienen en el cuerpo.
+        Un campo ausente o `null` se deja como estaba. Si llegan `email`, `role`,
+        `id`, `createdAt` o `updatedAt`, se ignoran (los clientes de la Fase I
+        mandan `email`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateProfileRequest' }
+      responses:
+        '200':
+          description: Perfil actualizado.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserProfile' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /profiles/{id}/sessions:
+    parameters:
+      - $ref: '#/components/parameters/ProfileId'
+      - $ref: '#/components/parameters/XUserId'
+      - $ref: '#/components/parameters/XUserEmail'
+    get:
+      tags: [Perfil]
+      operationId: getSessions
+      summary: Listar los dispositivos desde los que se usó la cuenta
+      description: |
+        Cada vez que un cliente obtiene el perfil se registra o actualiza una
+        sesión, identificada por el usuario, el cliente (`X-Client`) y el
+        `User-Agent`. `current` es `true` para la sesión de la llamada actual.
+        No hay operación para cerrar sesiones; es igual que en la Fase I.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/XClient'
+      responses:
+        '200':
+          description: Página de sesiones, de la más reciente a la más antigua.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionPage' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /profiles/{id}/export:
+    parameters:
+      - $ref: '#/components/parameters/ProfileId'
+      - $ref: '#/components/parameters/XUserId'
+      - $ref: '#/components/parameters/XUserEmail'
+    get:
+      tags: [Perfil]
+      operationId: exportProfile
+      summary: Descargar los datos que guarda Usuarios
+      description: |
+        **Cambio respecto a la Fase I.** El mock devolvía también currículums,
+        postulaciones y configuración de notificaciones. Como ningún servicio
+        llama a otro, Usuarios solo exporta lo suyo: perfil y sesiones. Si se
+        quiere un archivo completo, el cliente lo arma juntando esta respuesta con
+        las de CVs, Postulaciones y Notificaciones. Hay que confirmarlo con el equipo.
+      responses:
+        '200':
+          description: Copia de los datos del usuario.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DataExport' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /legal/privacy:
+    get:
+      tags: [Legales]
+      operationId: getPrivacyPolicy
+      summary: Política de privacidad vigente
+      parameters:
+        - $ref: '#/components/parameters/Lang'
+      responses:
+        '200':
+          description: Documento vigente en el idioma pedido.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LegalDocument' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /legal/terms:
+    get:
+      tags: [Legales]
+      operationId: getTermsOfService
+      summary: Términos y condiciones vigentes
+      parameters:
+        - $ref: '#/components/parameters/Lang'
+      responses:
+        '200':
+          description: Documento vigente en el idioma pedido.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LegalDocument' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /help:
+    get:
+      tags: [Ayuda]
+      operationId: getHelpContacts
+      summary: Contactos del centro de ayuda
+      description: No es paginado, igual que en la Fase I.
+      parameters:
+        - $ref: '#/components/parameters/Lang'
+      responses:
+        '200':
+          description: Lista de contactos.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HelpContactsResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+components:
+  parameters:
+    ProfileId:
+      name: id
+      in: path
+      required: true
+      description: '`sub` de Google (recomendado) o correo del usuario autenticado.'
+      schema: { type: string, maxLength: 320 }
+    XUserId:
+      name: X-User-Id
+      in: header
+      required: true
+      description: Lo agrega APIM con el claim `sub` del token de Google. Los clientes no lo envían.
+      schema: { type: string }
+    XUserEmail:
+      name: X-User-Email
+      in: header
+      required: true
+      description: Lo agrega APIM con el claim `email` del token de Google. Los clientes no lo envían.
+      schema: { type: string, format: email }
+    XClient:
+      name: X-Client
+      in: header
+      required: false
+      description: Cliente que hace la llamada. Si falta, se toma `unknown`.
+      schema: { type: string, enum: [web, android, unknown], default: unknown }
+    Page:
+      name: page
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSize:
+      name: pageSize
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+    Lang:
+      name: lang
+      in: query
+      required: false
+      description: Idioma del contenido. Si no existe en ese idioma, se devuelve en español.
+      schema: { type: string, enum: [es, en], default: es }
+
+  responses:
+    BadRequest:
+      description: Datos inválidos.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    Forbidden:
+      description: El `{id}` no corresponde al usuario autenticado, o faltan los encabezados de identidad.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    NotFound:
+      description: El perfil no existe todavía (se crea con `GET /profiles/{id}`).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+
+  schemas:
+    EpochMillis:
+      type: integer
+      format: int64
+      description: Milisegundos desde 1970-01-01T00:00:00Z (UTC).
+      example: 1792728000000
+
+    JobType:
+      type: string
+      enum: [full-time, part-time, freelance, internship]
+    Modality:
+      type: string
+      enum: [remote, on-site, hybrid]
+    Role:
+      type: string
+      enum: [user, admin]
+
+    UserProfile:
+      type: object
+      required: [id, fullName, email, types, modalities, sectors, role, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          description: '`sub` de Google.'
+          example: '108234567890123456789'
+        fullName: { type: string, maxLength: 120, example: Ana Rojas Méndez }
+        email: { type: string, format: email, example: ana@example.com }
+        phone: { type: string, maxLength: 30, nullable: true, example: '+506 8888 8888' }
+        address: { type: string, maxLength: 200, nullable: true, example: Ciudad Quesada, Alajuela }
+        photoUrl: { type: string, format: uri, maxLength: 2048, nullable: true }
+        bio: { type: string, maxLength: 1000, nullable: true }
+        types:
+          type: array
+          items: { $ref: '#/components/schemas/JobType' }
+        modalities:
+          type: array
+          items: { $ref: '#/components/schemas/Modality' }
+        sectors:
+          type: array
+          maxItems: 20
+          items: { type: string, maxLength: 60 }
+        role: { $ref: '#/components/schemas/Role' }
+        createdAt: { $ref: '#/components/schemas/EpochMillis' }
+        updatedAt: { $ref: '#/components/schemas/EpochMillis' }
+
+    UpdateProfileRequest:
+      type: object
+      description: Todos los campos son opcionales; solo se actualizan los que vienen.
+      properties:
+        fullName: { type: string, minLength: 1, maxLength: 120 }
+        phone: { type: string, maxLength: 30 }
+        address: { type: string, maxLength: 200 }
+        photoUrl: { type: string, format: uri, maxLength: 2048 }
+        bio: { type: string, maxLength: 1000 }
+        types:
+          type: array
+          items: { $ref: '#/components/schemas/JobType' }
+        modalities:
+          type: array
+          items: { $ref: '#/components/schemas/Modality' }
+        sectors:
+          type: array
+          maxItems: 20
+          items: { type: string, maxLength: 60 }
+
+    ActiveSession:
+      type: object
+      required: [id, deviceName, platform, client, lastActiveAt, current]
+      properties:
+        id: { type: string }
+        deviceName: { type: string, example: Chrome en Windows }
+        platform: { type: string, example: Windows }
+        client: { type: string, enum: [web, android, unknown] }
+        lastActiveAt: { $ref: '#/components/schemas/EpochMillis' }
+        current: { type: boolean }
+
+    SessionPage:
+      type: object
+      required: [items, totalRecords, page, pageSize]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/ActiveSession' }
+        totalRecords: { type: integer, format: int64 }
+        page: { type: integer }
+        pageSize: { type: integer }
+
+    DataExport:
+      type: object
+      required: [exportVersion, generatedAt, profile, sessions]
+      properties:
+        exportVersion: { type: string, example: '2.0' }
+        generatedAt: { $ref: '#/components/schemas/EpochMillis' }
+        profile: { $ref: '#/components/schemas/UserProfile' }
+        sessions:
+          type: array
+          items: { $ref: '#/components/schemas/ActiveSession' }
+
+    LegalDocument:
+      type: object
+      required: [id, title, version, effectiveDate, content]
+      properties:
+        id: { type: string, example: privacy-es-1.0 }
+        title: { type: string, example: Política de privacidad }
+        version: { type: string, example: '1.0' }
+        effectiveDate: { $ref: '#/components/schemas/EpochMillis' }
+        content: { type: string, description: Texto en Markdown. }
+
+    HelpContact:
+      type: object
+      required: [type, label, email]
+      properties:
+        type: { type: string, example: support }
+        label: { type: string, example: Soporte técnico }
+        email: { type: string, format: email, example: soporte@cvexpert.app }
+
+    HelpContactsResponse:
+      type: object
+      required: [contacts]
+      properties:
+        contacts:
+          type: array
+          items: { $ref: '#/components/schemas/HelpContact' }
+
+    ApiError:
+      type: object
+      required: [status, message, timestamp]
+      properties:
+        status: { type: integer, example: 403 }
+        message: { type: string, example: El perfil solicitado no corresponde al usuario autenticado. }
+        path: { type: string, example: /profiles/abc }
+        timestamp: { $ref: '#/components/schemas/EpochMillis' }
