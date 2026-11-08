@@ -1,77 +1,86 @@
 #!/usr/bin/env python3
-"""Copia OpenAPI y colecciones originales desde GitHub y verifica SHA Git blob.
-
-Solo usa Python stdlib. NO escribe sobre archivos si fallan verificaciones.
-"""
+"""Verifica los artefactos de origen antes de escribir las copias centrales."""
+import argparse
 import hashlib
 import json
-import pathlib
-import sys
-import urllib.error
+import subprocess
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
-MANIFEST = json.loads((ROOT / 'contratos/fuentes.json').read_text(encoding='utf-8'))
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def get_source(repo: str, ref: str, relative_path: str) -> bytes:
-    pieces = [urllib.parse.quote(part, safe='') for part in relative_path.split('/')]
-    url = f'https://raw.githubusercontent.com/SoftwareDesignTEC/{urllib.parse.quote(repo)}/{urllib.parse.quote(ref)}/' + '/'.join(pieces)
-    request = urllib.request.Request(url, headers={'User-Agent': 'CVExpert-docs-source-sync/1.0'})
-    with urllib.request.urlopen(request, timeout=30) as response:
+def git_blob_sha(data):
+    return hashlib.sha1(f"blob {len(data)}\0".encode("ascii") + data).hexdigest()
+
+
+def sources():
+    return json.loads((ROOT / "contratos/fuentes.json").read_text(encoding="utf-8"))
+
+
+def artifacts(manifest):
+    for service, info in manifest["servicios"].items():
+        yield info, info["openapi"], info["sha"], f"contratos/{service}.openapi.yaml"
+        if info.get("postman"):
+            yield info, info["postman"], info["postman_sha"], f"postman/originales/{service}.postman_collection.json"
+    for key in ("evento_notificacion", "guia_notificaciones"):
+        info = manifest[key]
+        yield info, info["path"], info["sha"], info["dest"]
+
+
+def download(org, info, path, clones):
+    if clones:
+        return subprocess.check_output(["git", "-C", str(clones / info["repo"]), "show", f"{info['revision']}:{path}"])
+    url = f"https://raw.githubusercontent.com/{org}/{info['repo']}/{info['revision']}/{urllib.parse.quote(path)}"
+    with urllib.request.urlopen(url, timeout=30) as response:
         return response.read()
 
 
-def git_blob_sha(data: bytes) -> str:
-    return hashlib.sha1(f'blob {len(data)}\0'.encode('ascii') + data).hexdigest()
+def adapt_guide(data):
+    guide = data.decode("utf-8")
+    header = (
+        "> Referencia del servicio. Consulte [las fuentes fijadas](fuentes.json) y "
+        "[el estado de integración](../docs/notificaciones.md) para distinguir el diseño "
+        "del código de clientes y del despliegue verificado.\n"
+    )
+    guide = guide.replace("# Contrato del servicio de Notificaciones\n", "# Contrato del servicio de Notificaciones\n\n" + header, 1)
+    guide = guide.replace("](openapi.yaml)", "](notificaciones.openapi.yaml)")
+    guide = guide.replace("Justin confirmó `course.recommended` el 2026-11-04.", "El contrato registra la confirmación de los campos de `course.recommended` el 2026-11-04.")
+    return guide.encode("utf-8")
 
 
-def write_if_changed(destination: pathlib.Path, data: bytes) -> None:
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    if destination.exists() and destination.read_bytes() == data:
-        print('  sin cambios:', destination.relative_to(ROOT))
-        return
-    destination.write_bytes(data)
-    print('  actualizado:', destination.relative_to(ROOT), f'({len(data)} bytes)')
-
-
-def main() -> int:
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--clones", type=Path, help="Directorio con los repositorios de origen disponibles en Git local")
+    parser.add_argument("--check", action="store_true", help="Comprobar la igualdad sin escribir archivos")
+    args = parser.parse_args()
+    manifest = sources()
+    checked = {}
     errors = []
-    for service, info in MANIFEST['servicios'].items():
-        repo = info['repo']
-        print('\n' + service, '←', repo)
+    for info, path, expected, dest in artifacts(manifest):
         try:
-            data = get_source(repo, 'main', info['openapi'])
-            actual_sha = git_blob_sha(data)
-            expected_sha = info['sha']
-            if actual_sha != expected_sha:
-                errors.append(f'{service}: fuente cambió: esperado {expected_sha}, actual {actual_sha}. Revisar diff y actualizar fuentes.json tras aprobación.')
-                continue
-            write_if_changed(ROOT / 'contratos' / f'{service}.openapi.yaml', data)
-        except (urllib.error.URLError, OSError) as exc:
-            errors.append(f'{service}: no se pudo descargar OpenAPI: {exc}')
-        if info.get('postman'):
-            try:
-                original = get_source(repo, 'main', info['postman'])
-                col = json.loads(original)
-                if not isinstance(col, dict) or 'item' not in col:
-                    raise ValueError('Colección sin item')
-                write_if_changed(ROOT / 'postman' / 'originales' / f'{service}.postman_collection.json', original)
-            except (urllib.error.URLError, OSError, ValueError) as exc:
-                errors.append(f'{service}: no se pudo obtener Postman original: {exc}')
-    e = MANIFEST['evento_notificacion']
-    try:
-        data = get_source(e['repo'], 'main', e['path'])
-        json.loads(data)
-        write_if_changed(ROOT / e['dest'], data)
-    except (urllib.error.URLError, OSError, ValueError) as exc:
-        errors.append(f'evento-notificacion: {exc}')
-    print('\nSINCRONIZACIÓN:', 'con advertencias' if errors else 'completada')
-    for err in errors:
-        print('ERROR:', err, file=sys.stderr)
-    return 1 if errors else 0
+            data = download(manifest["organizacion"], info, path, args.clones)
+            actual = git_blob_sha(data)
+            if actual != expected:
+                raise ValueError(f"blob esperado {expected}, encontrado {actual}")
+            if info == manifest["guia_notificaciones"]:
+                data = adapt_guide(data)
+            destination = ROOT / dest
+            if args.check and (not destination.exists() or destination.read_bytes() != data):
+                raise ValueError("la copia local difiere")
+            checked[destination] = data
+        except (OSError, ValueError, subprocess.CalledProcessError) as error:
+            errors.append(f"{info['repo']} {path}: {error}")
+
+    if errors:
+        parser.exit(1, "\n".join(f"ERROR {error}" for error in errors) + "\n")
+    for destination, data in checked.items():
+        if not args.check and (not destination.exists() or destination.read_bytes() != data):
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(data)
+        print(f"OK {destination.relative_to(ROOT)}")
 
 
-if __name__ == '__main__':
-    raise SystemExit(main())
+if __name__ == "__main__":
+    main()

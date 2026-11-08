@@ -1,0 +1,4 @@
+# Mantener los bytes de los artefactos cuya procedencia se verifica con Git blob SHA.
+/contratos/*.openapi.yaml -text
+/contratos/evento-notificacion.schema.json -text
+/postman/originales/*.json -text
