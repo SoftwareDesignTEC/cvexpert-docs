@@ -1,32 +1,27 @@
-# Auditoría inicial de contratos y colecciones — 8 noviembre 2026
+# Auditoría de contratos y código
 
-## Cobertura documental encontrada
+Se revisaron las ramas `main` de los cinco servicios y los dos clientes en las revisiones de [fuentes.json](../contratos/fuentes.json). Las rutas, encabezados, DTO, errores declarados y pruebas de origen se consultan en la [matriz](matriz-trazabilidad.md). De la [consolidación del PR #1](https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/1) se retoman los controles de referencias, IDs de operación y JSON Schema, además de las diferencias de errores, paginación e identidad. Los diagnósticos anteriores sobre rutas pendientes se contrastaron con el código actual.
 
-| Servicio | OpenAPI | Operaciones | Colección Postman de origen | Solicitudes existentes |
-|---|---|---:|---|---:|
-| Usuarios | `openapi.yaml` | 7 | No localizada en `main` | 0 localizadas |
-| CVs | `docs/openapi.yaml` | 9 | `docs/postman/cvexpert-ms-cvs.postman_collection.json` | 9 |
-| Ofertas y Postulaciones | `docs/openapi.yaml` | 13 | `postman/ofertas-postulaciones.postman_collection.json` | 21 |
-| Brecha y Cursos | `openapi.yaml` | 4 | `postman/brecha-cursos.postman_collection.json` | 5 |
-| Notificaciones | `docs/contratos/openapi.yaml` | 12 | No localizada en `main` | 0 localizadas |
-| **Total** | **5 contratos** | **45** | **3 colecciones** | **35 solicitudes** |
+| Servicio | Rutas REST del contrato | Contraste con `main` |
+| --- | ---: | --- |
+| Usuarios | 7 | `ProfileController`, `LegalController` y `HelpController` cubren el inventario. Las rutas de perfil requieren identidad propia. Una lectura puede crear el perfil, actualizar su rol y registrar actividad de sesión. `X-Client` y `User-Agent` también se leen en consulta y exportación, aunque el contrato lista `X-Client` para sesiones. |
+| CVs | 9 | Los routers de CV, plantillas y experiencia implementan las rutas. Los CV se filtran por propietario. Las operaciones de experiencia usan el proveedor de lenguaje configurado y registran su uso. `GET /health` existe en el código y queda fuera del OpenAPI de producto. |
+| Ofertas y postulaciones | 13 | Los controladores implementan catálogo, postulaciones, alertas y cambio administrativo de estado. Las escrituras de ofertas requieren rol administrativo. Una postulación repetida devuelve `409` y una ajena se oculta con `404`. La sonda Actuator queda fuera del inventario OpenAPI. |
+| Brecha y cursos | 4 | `/courses` consulta el catálogo PostgreSQL. `PUT /skills-gap/input` reemplaza la instantánea del usuario. `GET /skills-gap` devuelve `409 SKILLS_INPUT_REQUIRED` si no existe una instantánea y el mercado está configurado. El código no contiene un publicador para `course.recommended`. |
+| Notificaciones | 12 | Directorio, dispositivos, historial, contador, lectura, plantillas, salud y hub están implementados. `NotificationsHub.Path` es `/notifications/hub`. El negotiate devuelve la forma Azure únicamente con Azure SignalR configurado. |
 
-En las tres colecciones existentes se encontraron scripts `test` asociados a las solicitudes. No se ha comprobado que sus aserciones sean correctas o que la ejecución pase en APIM. Las 35 solicitudes NO equivalen a 35 endpoints distintos: existen solicitudes duplicadas para distintos escenarios.
+## Diferencias que debe resolver el servicio responsable
 
-## Evidencias observadas durante diagnóstico Android
+| Responsable | Diferencia | Corrección propuesta |
+| --- | --- | --- |
+| Usuarios | En `components.schemas.UserProfile.properties.address`, el ejemplo de un mapa YAML en línea contiene una coma sin comillas. OpenAPI interpreta `Alajuela` como una propiedad inválida. El hash de la copia coincide con el original. | Entrecomillar el valor completo en origen. CI corrige solo ese ejemplo en memoria para el blob fijado y valida el resto del contrato de forma estricta. |
+| Usuarios | Los controladores de consulta y exportación también leen `X-Client` y `User-Agent` opcionales. | Alinear la documentación de cabeceras y de los efectos de sesión con el controlador. |
+| CVs | Los handlers del proveedor para las operaciones de experiencia pueden producir `429`, `502` o `503`. El OpenAPI documenta los errores de entrada e identidad. | Completar el contrato de errores del proveedor y su evidencia. |
+| CVs | El DTO serializa campos opcionales como `null` en `PersonalInfo`, `TemplateSection` y `Certification`. Además, `Template.layout` declara `nullable` junto a `allOf`. | Alinear los esquemas de origen con la serialización. Postman admite solo los nulos comprobados en esos DTO y conserva los demás controles de respuesta. |
+| Brecha y APIM | El OpenAPI conserva una mención al mock de APIM. El código de backend ya implementa brecha ordinal y persistencia. El bypass local del catálogo no autentica el flujo de instantáneas. | ARM registra el destino de Brecha para las tres operaciones de negocio sin una política de mock observada. Actualizar la nota de origen tras comprobar la traza y la revisión efectiva del backend. |
+| Notificaciones y clientes | El payload de negotiate con token de Azure se diferencia del fallback de SignalR local. La guía FCM describe comportamiento de cliente que aún no aparece en Android. | Mantener ambos modos explícitos y cerrar registro, renovación, baja y recepción de push en Android. |
+| APIM y Ofertas | APIM elimina el rol en las tres escrituras de ofertas que el backend reserva a administradores. | Aplicar la política de autorización de administrador en el gateway y probar ambos roles. |
+| APIM y Notificaciones | Las tres operaciones de plantillas están ausentes del inventario de APIM revisado. | Acordar su publicación y autorización. |
+| Integración | Los servicios usan distintas formas de error y límites de paginación. | Mantener los esquemas y límites de cada dominio en clientes y pruebas. Acordar cambios de compatibilidad en los servicios responsables. |
 
-- La aplicación `com.cvpro.app.debug` obtuvo un ID token emitido por Google. Con el cliente OAuth antiguo (`aud` diferente al de CI), `/api/v1/cvs`, `/api/v1/jobs` y `/api/v1/skills-gap` devolvían **401**.
-- Tras configurar localmente el Google Web Client ID coincidente con CI, `GET /api/v1/cvs` y `GET /api/v1/jobs` devolvieron **200**.
-- `GET /api/v1/skills-gap` devolvió **409** con `SKILLS_INPUT_REQUIRED`, informando de la ausencia de una instantánea de habilidades.
-- `GET /api/v1/help` devolvió 401 antes de iniciar sesión, por falta de token; no demuestra fallo posterior al login.
-
-Estas observaciones prueban solamente tres solicitudes de una sesión de Android; no acreditan que todos los endpoints estén operativos. **No almacenar los tokens reales en evidencias.**
-
-## Hallazgos por resolver
-
-1. **Brecha**: el texto del `openapi.yaml` describe operaciones con mock en APIM. Se debe actualizar la declaración solo después de confirmar la política y backend efectivos.
-2. **Ofertas**: `x-estado` conserva referencias históricas a mocks de Fase I; no interpretarlas como estado operativo actual.
-3. **Usuarios y Notificaciones**: falta localizar/recibir colecciones Postman originales en los paths públicos inspeccionados; la colección central incorpora entradas de prueba iniciales.
-4. **APIM**: no existe en este paquete una exportación verificable de políticas, certificados, roles, rewrite de rutas o el OpenAPI importado. Solicitar a la persona encargada.
-5. **Contratos copiados**: el usuario debe ejecutar `scripts/sincronizar_contratos.py` para obtener los documentos canónicos; hasta entonces la carpeta contiene manifiesto y matriz, NO los cinco YAML completos.
-6. **Colección central**: contiene 45 operaciones y scripts de aserción, pero algunos bodies son placeholders `{}` y NO ha pasado un Collection Runner. No confundir cobertura estructural con cobertura funcional.
+Los estados de la matriz describen el código de la revisión fijada. Los artefactos de ejecución y los bloqueos actuales están en el [estado de entrega](estado-entrega.md).

@@ -1,31 +1,51 @@
-# Colección global Postman CVExpert
+# Postman y Newman
 
-La colección central incluye **45 operaciones** de los OpenAPI originales. Cada solicitud tiene al menos una aserción de estado HTTP de éxito documentado; `GET /jobs` y `GET /cvs` también validan paginación. **No equivale a ejecución real.**
+Importe [cvexpert.postman_collection.json](cvexpert.postman_collection.json) y duplique el [entorno de ejemplo](apim.postman_environment.json). La colección combina escenarios principales, comprobaciones de seguimiento y negativas. La [matriz](../docs/matriz-trazabilidad.md) identifica la solicitud principal de cada operación. Los cuerpos se obtienen de los contratos, DTO o colecciones de origen y se validan localmente con los esquemas.
 
-## Importar y configurar
+## Entorno APIM
 
-1. Importar `cvexpert.postman_collection.json` y `apim.postman_environment.json`.
-2. Configurar `apiBaseUrl` con la base **efectiva** del gateway; el valor de ejemplo se observó en Android, no garantiza que las 45 rutas estén disponibles.
-3. Definir `googleIdToken` en el *Current value* local (o el mecanismo local de secretos de Postman); no compartir ni exportar el entorno con tokens.
-4. Configurar IDs reales de prueba: `profileId`, `cvId`, `jobId`, `applicationId`, `notificationId`, `deviceToken`, `notificationType`, etc. Para `profileId` consultar el contrato del servicio; no asumir que es correo.
-5. **Antes de habilitar `allowWrites=true`**, sustituir cada `{}` de ejemplo por un cuerpo válido conforme al OpenAPI de su servicio. Se puede ejecutar `python scripts/generar_postman_desde_openapi.py` para generar ejemplos a partir de `requestBody`. Las rutas admin requieren también `allowAdmin=true` y un token con rol.
-6. Los endpoints `/health` son pruebas **directas de backend** solo si existen permisos/entorno; habilitar manualmente `allowDirectHealth=true` y configurar la URL local exacta.
-7. Ejecutar GET primero. Usar un ambiente de pruebas aislado para mutaciones.
+| Variable | Configuración |
+| --- | --- |
+| `target`, `enableApim` | Use `apim` y `true` tras confirmar el destino. |
+| `apiBaseUrl` | Base con prefijo, sin barra final. La API principal observada usa `https://gabriel-api-management.azure-api.net/api/v1`. Para escribir, use la base equivalente de un entorno aislado. |
+| `googleIdToken` | ID token vigente de la cuenta propietaria, emitido para la audiencia aceptada por APIM. |
+| `otherGoogleIdToken`, `freshGoogleIdToken` | Cuenta ajena y cuenta sin instantánea, respectivamente. |
+| `adminGoogleIdToken`, `allowAdmin` | ID token de cuenta administradora de ensayo y habilitación explícita `true` para los casos administrativos. |
+| `allowWrites`, `testApiBaseUrl` | Para operaciones con efectos, establezca `true` y la misma base HTTPS confirmada de ensayo en ambas variables de URL. Incluye ciertas lecturas de perfil, que registran sesión, y las solicitudes negativas con método de escritura. |
+| `allowApimJobAdmin` | Habilite solo cuando el entorno entregue el rol administrativo al backend de Ofertas. La política consultada elimina ese encabezado en las escrituras. |
+| `apimRouteOverrides` | Opcional. Objeto JSON con clave `servicio MÉTODO /ruta/interna` y valor de ruta relativa a la base. Conserve los marcadores de parámetros, por ejemplo `{id}`. Las operaciones de plantillas de Notificaciones requieren un mapeo confirmado en ese entorno. |
 
-## Restricciones conocidas
+Inicie sesión con las cuentas de ensayo en el cliente configurado para esa audiencia. Use el ID token en las variables locales del entorno de Postman o en un archivo privado para Newman. Cuando expire, renueve la sesión en el cliente y sustituya el token correspondiente. Los tokens, correos e IDs de prueba se configuran fuera de Git. El [flujo de identidad](../docs/seguridad-apim.md) describe las cabeceras que inyecta el gateway.
 
-- **No todas las rutas del OpenAPI son necesariamente públicas** en APIM. El gateway podría transformar paths o excluir `/health`.
-- Los JSON `{}` de operaciones con body son **placeholders para no inventar DTO**. Hay que completarlos antes de marcar pruebas como ejecutadas.
-- La comprobación de respuesta `200/201/204` no reemplaza pruebas de esquema o permisos: añadirlas tras integrar datos reales.
-- Un `409` de `/skills-gap` por ausencia de snapshot es un escenario negativo significativo, no un éxito.
-- Los scripts Postman de origen se pueden descargar a `postman/originales` usando `sincronizar_contratos.py` para evaluar casos positivos y negativos ya preparados.
+## Variables de prueba y orden
 
-## Ejecución desde línea de comandos (opcional)
+- En **Lecturas**, configure `fixtureJobId` y `fixtureTemplateId` con IDs existentes. `GET /alerts` requiere alertas previamente guardadas. El negotiate de SignalR está en esta carpeta y emite un token efímero sin requerir el permiso de escritura.
+- En **Perfil y alertas**, `profileId` corresponde al sujeto de la cuenta usuaria de ensayo. Este flujo actualiza su perfil y las alertas de esa misma cuenta.
+- En **Ciclo de CV**, el catálogo aporta una plantilla. La colección guarda `runCvId`, verifica creación y edición, elimina el CV y comprueba `404`. Ejecute la carpeta completa en una sola corrida.
+- **Administración de ofertas** guarda `runJobId` al crear, verifica la oferta y la edición, elimina y comprueba `404`. En **Ciclo de postulaciones**, configure `fixtureJobId` con una oferta de ensayo a la que la cuenta aún no se haya postulado. El flujo conserva `runApplicationId`, verifica duplicidad, propiedad, cambios de estado y retiro.
+- En **Instantánea y brecha**, el caso positivo escribe y luego espera `200`. La carpeta **Negativas** usa la cuenta sin instantánea para verificar `409 SKILLS_INPUT_REQUIRED`. El mercado debe estar configurado para ambas pruebas.
+- En **Directorio y dispositivos**, use `fixtureDeviceToken` de un dispositivo Firebase reservado para la prueba. La colección conserva el token en memoria para comprobar el registro repetido y la baja idempotente. **Lectura de avisos** requiere `fixtureNotificationId` de un aviso de esa cuenta.
+- En **Administración de plantillas**, use una base descartable y el par `notificationType`/`language`. Las ediciones persisten. Para observar la respuesta por defecto, elija un par sin una edición previa.
+- **APIM - Rechazo de identidad** contiene dos GET separados para token ausente e inválido. Ambos esperan `401` sin imponer un esquema de error del backend.
 
-Una vez instalado Newman y configurado el entorno local, ejecutar desde el repositorio:
+Las variables con prefijo `run` duran una corrida. Una solicitud dependiente sin el dato anterior se omite con el motivo. Tras una interrupción, revise el entorno de ensayo y limpie los recursos creados antes de reintentar.
 
-```bash
-newman run postman/cvexpert.postman_collection.json -e postman/mi_entorno_privado.postman_environment.json -r cli,json --reporter-json-export evidencias/newman-resultado.json
+## Backend directo
+
+Use `target=local`, `allowDirect=true` y la URL de loopback del servicio, por ejemplo `brecha-cursosBaseUrl=http://127.0.0.1:3000`. Las otras bases son `usuariosBaseUrl`, `cvsBaseUrl`, `ofertas-postulacionesBaseUrl` y `notificacionesBaseUrl`. Las carpetas de backend directo separan salud y acceso sin identidad o certificado. Los casos de negocio pueden ejecutarse contra un backend local compatible con identidad de prueba.
+
+Para los servicios con modo local documentado, configure los pares `localUserId`/`localUserEmail`, `localOtherId`/`localOtherEmail` y `localAdminId`/`localAdminEmail` según el escenario. El runner aplica la identidad solo al proceso en loopback. El negocio de Brecha exige un certificado verificado incluso con el modo local del catálogo. Ejecute su flujo autenticado vía APIM de ensayo. La negociación local de Notificaciones espera la forma del contrato Azure solo con `localSignalR=true` y el proveedor Azure configurado.
+
+## Ejecutar e interpretar
+
+En Postman seleccione el entorno y las carpetas en Collection Runner. La consola registra `NO EJECUTADA` cuando falta una habilitación, identidad o fixture. La solicitud omitida no tiene respuesta ni aserciones. Las carpetas de salud y negocio se pueden ejecutar por separado.
+
+Instale Newman 6.2.3 con Node.js y ejecute las carpetas desde la raíz.
+
+```sh
+npm install --no-save --no-package-lock newman@6.2.3
+node scripts/ejecutar_postman.cjs postman/mi-entorno-privado.json "Lecturas"
+node scripts/ejecutar_postman.cjs postman/mi-entorno-privado.json "Ciclo de CV" "Negativas"
 ```
 
-No subir `mi_entorno_privado.postman_environment.json` a Git. Redactar los reportes antes de publicarlos.
+El runner muestra el código HTTP, el nombre de la solicitud y un resumen sin URLs, cabeceras ni cuerpos. Devuelve error si hubo fallos, omisiones o cero solicitudes ejecutadas. Los diagnósticos detallados de Postman o Newman pueden contener datos sensibles. Consérvelos en privado y adjunte solo el resumen depurado según el [plan de pruebas](../docs/plan-pruebas.md).

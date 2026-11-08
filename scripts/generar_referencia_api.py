@@ -64,7 +64,7 @@ def main():
         if not path.exists():
             raise FileNotFoundError(f'Falta {path}. Primero ejecutar scripts/sincronizar_contratos.py')
         spec=yaml.safe_load(path.read_text(encoding='utf-8'))
-        out.extend([f"## {info['title']}",'',f"Fuente: [OpenAPI original](https://github.com/SoftwareDesignTEC/{info['repo']}/blob/main/{info['openapi']})",''])
+        out.extend([f"## {info['title']}",'',f"[OpenAPI original](https://github.com/SoftwareDesignTEC/{info['repo']}/blob/{info['revision']}/{info['openapi']})",''])
         for uri, pathobj in spec.get('paths',{}).items():
             if not isinstance(pathobj,dict):continue
             for verb,operation in pathobj.items():

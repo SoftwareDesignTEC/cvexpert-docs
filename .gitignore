@@ -11,3 +11,8 @@ postman/*local*.postman_environment.json
 evidencias/*.json
 evidencias/*.html
 __pycache__/
+
+# Dependencias y referencias de consulta local
+node_modules/
+.docs-venv/
+/docs/referencia-api.md

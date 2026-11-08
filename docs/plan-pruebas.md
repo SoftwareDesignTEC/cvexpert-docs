@@ -1,30 +1,26 @@
-# Plan de pruebas End-to-End y criterios de aceptación
+# Plan de verificación E2E
 
-## Condiciones previas
+## Preparación
 
-- APIM accesible con las políticas previstas y los backends desplegados.
-- Token de Google **válido**, no vencido y emitido para la audiencia permitida por APIM; nunca guardarlo en Git.
-- Cuenta de usuario, cuenta de administrador y datos de prueba **aislados** (CV, vacante, postulación, notificación y dispositivo).
-- Confirmación del prefijo de rutas y de disponibilidad pública por operación.
-- JSON de ejemplo validado contra cada DTO OpenAPI; ejecutar `scripts/generar_postman_desde_openapi.py` tras sincronizar.
-- Las llamadas de modificación se ejecutarán sobre un entorno de pruebas bajo control del equipo.
+1. El responsable de APIM confirma el inventario de operaciones, revisión, destino y políticas para el entorno de ensayo. El responsable de cada servicio confirma la revisión desplegada y sus dependencias.
+2. Preparar una cuenta usuaria propietaria, otra ajena, una administradora y una cuenta sin instantánea de habilidades. Usar bases y cola de ensayo aisladas. Para FCM, reservar un dispositivo del proyecto Firebase de prueba.
+3. Configurar el [entorno Postman](../postman/README.md), comprobar que el ID token corresponde a la audiencia del entorno y validar la disponibilidad de los datos de prueba. Separar las corridas con y sin credenciales.
 
-## Ejecución
+## Orden de ejecución
 
-1. Ejecutar solicitudes GET de catálogo y perfil; comprobar `200`, cuerpo y aislamiento por usuario.
-2. Crear y recuperar un CV, editarlo, probar IA según disponibilidad y eliminar el recurso creado.
-3. Consultar ofertas; crear/postular con usuario; actualizar postulación y revisar autorización admin antes de borrarla.
-4. Guardar instantánea de habilidades (`PUT /skills-gap/input`) y luego consultar brecha; probar `409 SKILLS_INPUT_REQUIRED` por separado cuando falten habilidades.
-5. Registrar usuario en directorio y dispositivo; generar/listar/leer notificaciones; validar SignalR, push y correo por flujos E2E donde aplique.
-6. Comprobar escenarios negativos `401`, `403`, `404` y `409` sin aceptar un error como resultado de éxito.
-7. Guardar informes Newman / Collection Runner redactados y capturas de APIM/Swagger.
+| Paso | Resultado que debe verificarse |
+| --- | --- |
+| Lecturas | Esquema de respuesta, paginación, consulta de una entidad conocida y lectura de configuraciones preparadas. Negotiate devuelve URL y token de Azure SignalR cuando está configurado. |
+| Perfil y alertas | Alta o carga del perfil, actualización parcial, sesión/exportación y persistencia de alertas. |
+| CVs | Crear con plantilla del catálogo, leer por ID, actualizar, volver a leer, eliminar y obtener `404`. Ejecutar las operaciones de experiencia aparte con proveedor habilitado. |
+| Ofertas y postulaciones | Crear oferta como administrador, editar, postular como usuario, comprobar duplicado `409`, aislamiento `404` para otra cuenta, cambio de estado administrativo y limpieza por ID. |
+| Brecha | Guardar instantánea, consultar con éxito y, con una cuenta diferente sin instantánea, verificar `409 SKILLS_INPUT_REQUIRED`. Confirmar que APIM alcanza el backend real. |
+| Notificaciones | Actualizar directorio, registrar y volver a registrar el token, eliminarlo y repetir la baja. Verificar lectura y contador con avisos de prueba. Administrar plantillas en una base descartable. |
+| Seguridad | Probar token ausente, inválido, vencido o con audiencia ajena, usuario sin permiso, suplantación de encabezados y acceso directo sin certificado válido. |
+| Mensajería | Generar un evento mediante un productor implementado o publicar un mensaje de prueba autorizado. Correlacionar `eventId` con historial, SignalR, correo y FCM. Reenviar el mismo ID y comprobar deduplicación. Probar mensaje inválido y su razón en la cola de errores. |
 
-## Criterio de aceptación para afirmar «Postman completo»
+En la fase de limpieza, conservar los IDs devueltos por el entorno privado hasta que se confirme la baja de los recursos creados. Si se interrumpe un flujo, revisar los registros de ensayo antes de reintentarlo. Las instantáneas, los perfiles, las alertas y las ediciones de plantillas requieren restaurar los datos de prueba o descartar el entorno.
 
-- Hay al menos una solicitud y una aserción útil por endpoint **expuesto**.
-- Todas las pruebas de escenario feliz se ejecutaron y pasaron en el gateway real; cada `skip` tiene justificación documentada.
-- Los casos de escritura tienen cuerpos válidos y no alteran datos productivos.
-- Existen evidencias de seguridad gateway → backend y permisos de usuario/administrador.
-- Los 45 elementos del inventario se reconciliaron con operaciones de APIM; las no expuestas quedaron explícitamente justificadas.
+## Evidencia
 
-**Estado actual:** cobertura estructural creada, sin ejecución de pruebas E2E en este paquete.
+Registrar fecha, revisión, canal, nombre de solicitud, código esperado y recibido, aserciones y razón de cada omisión. Conservar solo resúmenes depurados en [evidencias](../evidencias/README.md). La [matriz](matriz-trazabilidad.md) y el [estado de entrega](estado-entrega.md) separan cobertura definida, ejecución local y pruebas de gateway.
