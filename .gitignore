@@ -1,0 +1,13 @@
+# Entornos privados, resultados y secretos
+postman/*privado*
+postman/*private*
+postman/*local*.postman_environment.json
+.env
+.env.*
+*.p12
+*.pfx
+*.pem
+*.key
+evidencias/*.json
+evidencias/*.html
+__pycache__/

@@ -1,0 +1,25 @@
+name: Validar documentación CVExpert
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependencias
+        run: python -m pip install -r requirements-docs.txt
+      - name: Validar inventario, contratos y tests Postman
+        run: python scripts/validar_cobertura.py
+      - name: Validar JSON de la colección y el entorno
+        run: |
+          python -m json.tool postman/cvexpert.postman_collection.json > /dev/null
+          python -m json.tool postman/apim.postman_environment.json > /dev/null
+          python -m json.tool contratos/fuentes.json > /dev/null

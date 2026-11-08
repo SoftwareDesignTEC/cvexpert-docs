@@ -1,0 +1,47 @@
+{
+  "capturado_el": "2026-11-08",
+  "organizacion": "SoftwareDesignTEC",
+  "nota": "Los SHA son SHA Git blob de OpenAPI observados en main. El sincronizador los verifica antes de reemplazar copias.",
+  "servicios": {
+    "usuarios": {
+      "repo": "cvexpert-ms-usuarios",
+      "openapi": "openapi.yaml",
+      "sha": "e12d3effe912a060c355606e60999c070c57eef7",
+      "postman": null,
+      "title": "Usuarios"
+    },
+    "cvs": {
+      "repo": "cvexpert-ms-cvs",
+      "openapi": "docs/openapi.yaml",
+      "sha": "013cad93409e82482653d5e7dd7221a8961c4547",
+      "postman": "docs/postman/cvexpert-ms-cvs.postman_collection.json",
+      "title": "CVs y plantillas"
+    },
+    "ofertas-postulaciones": {
+      "repo": "cvexpert-ms-ofertas-postulaciones",
+      "openapi": "docs/openapi.yaml",
+      "sha": "5fe3cd7dabf78f1b909e1d3d6cd3404833c25837",
+      "postman": "postman/ofertas-postulaciones.postman_collection.json",
+      "title": "Ofertas y postulaciones"
+    },
+    "brecha-cursos": {
+      "repo": "cvexpert-ms-brecha-cursos",
+      "openapi": "openapi.yaml",
+      "sha": "fcf1748eb169ce6c194ed880f5c1a941a1ae2f52",
+      "postman": "postman/brecha-cursos.postman_collection.json",
+      "title": "Brecha y cursos"
+    },
+    "notificaciones": {
+      "repo": "cvexpert-ms-notificaciones",
+      "openapi": "docs/contratos/openapi.yaml",
+      "sha": "9d9df718e0f3faa8c780f759c27ff72bc4dc8817",
+      "postman": null,
+      "title": "Notificaciones"
+    }
+  },
+  "evento_notificacion": {
+    "repo": "cvexpert-ms-notificaciones",
+    "path": "docs/contratos/evento-notificacion.schema.json",
+    "dest": "contratos/evento-notificacion.schema.json"
+  }
+}
