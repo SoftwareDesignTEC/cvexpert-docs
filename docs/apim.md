@@ -1,0 +1,94 @@
+# APIM
+
+Todo el tráfico de la web y de Android entra por **Azure API Management** (plan
+Consumption):
+
+```
+https://<gateway de APIM>/api/v1/<ruta del contrato>
+```
+
+APIM valida el token de Google, agrega la identidad y reenvía la llamada al microservicio
+presentando el certificado de cliente. Ningún backend recibe el token de Google. Los
+nombres de los recursos de Azure no van aquí porque el repo es público.
+
+## Mapa de rutas
+
+| Ruta pública (`/api/v1/...`) | Backend | API por recurso |
+|---|---|---|
+| `/profiles/{id}`, `/profiles/{id}/sessions`, `/profiles/{id}/export` | Usuarios | `perfiles` |
+| `/legal/terms`, `/legal/privacy` | Usuarios | `legales` |
+| `/help` | Usuarios | `ayuda` |
+| `/cvs`, `/cvs/{id}`, `/cvs/ai/expand-experience`, `/cvs/ai/translate-experience` | CVs | `curriculos` |
+| `/templates`, `/templates/{id}` | CVs | `plantillas` |
+| `/jobs`, `/jobs/{id}` | Ofertas y Postulaciones | `ofertas` |
+| `/applications`, `/applications/{id}` | Ofertas y Postulaciones | `postulaciones` |
+| `/alerts` | Ofertas y Postulaciones | `alertas` |
+| `/admin/applications/{id}/status` | Ofertas y Postulaciones | `administracion` |
+| `/skills-gap`, `/skills-gap/input`, `/courses` | Brecha y Cursos | `brecha-habilidades` |
+| `/notifications/...` (8 operaciones; `/notifications/templates` todavía no) | Notificaciones | `notificaciones` |
+
+APIM le quita `/api/v1` a la ruta antes de reenviarla: `/api/v1/cvs/1` llega al backend
+como `/cvs/1`.
+
+**Dos lugares por operación.** Los clientes usan la API `cv-api` (sufijo `api/v1`). Cada
+operación también está copiada en su API por recurso (sufijo `api/v1/<api>`), que existe
+para ordenar el APIM por módulo. Una operación nueva va en los dos.
+
+## Qué hace APIM en cada llamada
+
+1. **CORS.** Permite cualquier origen y los métodos `GET`, `POST`, `PUT`, `DELETE`,
+   `PATCH` y `OPTIONS`, con cualquier encabezado. Expone `X-Data-Mode` al navegador.
+2. **Token de Google.** `validate-jwt` contra `accounts.google.com`, con el client ID de
+   Google como audiencia. Sin token válido responde 401 y la llamada no llega al backend.
+   Los `OPTIONS` no se validan.
+3. **Identidad.** Pone `X-User-Id` (claim `sub`) y `X-User-Email` (claim `email`). Si el
+   cliente los manda, los pisa. El cliente nunca debe mandarlos.
+4. **Rol.** Borra cualquier `X-User-Role` que mande el cliente. Solo
+   `/admin/applications/{id}/status` manda `X-User-Role: admin`, y solo si el correo está
+   en la lista de administradores de APIM; si no está, responde 403 sin llamar al backend.
+5. **Certificado.** Presenta el certificado de cliente al backend (ver
+   [certificado-apim.md](certificado-apim.md)).
+
+APIM no cachea respuestas, no reescribe códigos de estado ni cuerpos de error, y no limita
+el tamaño de las peticiones. El timeout hacia el backend es de 120 s en `/cvs/ai/*` y el
+de defecto en el resto.
+
+**Agregar un administrador** implica cambiar dos lugares: `ADMIN_EMAILS` del App Service
+de Usuarios y la lista de administradores de APIM (un named value).
+
+## Cómo agregar una operación
+
+1. Si el microservicio es nuevo, crear un **backend** en APIM con la URL del App Service.
+2. Crear la operación en `cv-api` con el método y la ruta exactos del contrato.
+3. Ponerle esta política (cambiando `backend-id`):
+
+   ```xml
+   <policies>
+     <inbound>
+       <base />
+       <set-header name="X-User-Role" exists-action="delete" />
+       <set-backend-service backend-id="cvs" />
+     </inbound>
+     <backend><base /></backend>
+     <outbound><base /></outbound>
+     <on-error><base /></on-error>
+   </policies>
+   ```
+
+   `<base />` trae CORS, el token, la identidad y el certificado desde la política de la API.
+4. Copiar la operación y su política en la API por recurso que le corresponde.
+5. Si usa un método nuevo en el navegador, agregarlo a `allowed-methods` de CORS en la
+   política de cada API.
+6. Probarla **sin token**: tiene que responder **401**. Un 404 significa que APIM no la
+   encontró (ruta mal escrita o choque de sufijos). Los cambios tardan unos segundos en
+   aplicarse.
+
+## Regla de sufijos
+
+APIM elige la API con el sufijo más largo que coincide. Por eso **el sufijo de una API por
+recurso nunca puede ser igual al primer segmento de una ruta de `cv-api`** (`cvs`, `legal`,
+`admin`, `jobs`, `profiles`, `notifications`, etc.).
+
+Del 2 al 7 de noviembre las APIs por recurso de CVs, legales y admin tenían los sufijos
+`api/v1/cvs`, `api/v1/legal` y `api/v1/admin`. Se tragaban esas rutas de `cv-api` y
+respondían 404. Se renombraron a `curriculos`, `legales` y `administracion`.
