@@ -1,0 +1,328 @@
+{
+  "fecha": "2026-11-08",
+  "servicio_apim": "gabriel-api-management",
+  "api": "cv-api",
+  "prefijo": "/api/v1",
+  "operaciones": [
+    {
+      "servicio": "usuarios",
+      "metodo": "GET",
+      "ruta_interna": "/profiles/{id}",
+      "operacion_apim": "get-profile",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "usuarios",
+      "metodo": "PUT",
+      "ruta_interna": "/profiles/{id}",
+      "operacion_apim": "update-profile",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "usuarios",
+      "metodo": "GET",
+      "ruta_interna": "/profiles/{id}/sessions",
+      "operacion_apim": "get-active-sessions",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "usuarios",
+      "metodo": "GET",
+      "ruta_interna": "/profiles/{id}/export",
+      "operacion_apim": "get-data",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "usuarios",
+      "metodo": "GET",
+      "ruta_interna": "/legal/privacy",
+      "operacion_apim": "get-privacy-policy",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "usuarios",
+      "metodo": "GET",
+      "ruta_interna": "/legal/terms",
+      "operacion_apim": "6abe9a837e7a3e67f0188884",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "usuarios",
+      "metodo": "GET",
+      "ruta_interna": "/help",
+      "operacion_apim": "get-help",
+      "destino": "App Service de Usuarios",
+      "rol_apim": "sin política específica"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "GET",
+      "ruta_interna": "/cvs",
+      "operacion_apim": "get-cvs",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "POST",
+      "ruta_interna": "/cvs",
+      "operacion_apim": "create-cv",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "GET",
+      "ruta_interna": "/cvs/{id}",
+      "operacion_apim": "get-cv-by-id",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "PUT",
+      "ruta_interna": "/cvs/{id}",
+      "operacion_apim": "update-cv",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "DELETE",
+      "ruta_interna": "/cvs/{id}",
+      "operacion_apim": "delete-cv",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "GET",
+      "ruta_interna": "/templates",
+      "operacion_apim": "get-templates",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "GET",
+      "ruta_interna": "/templates/{id}",
+      "operacion_apim": "get-template-by-id",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "POST",
+      "ruta_interna": "/cvs/ai/expand-experience",
+      "operacion_apim": "cvs-ai-expand-experience",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "cvs",
+      "metodo": "POST",
+      "ruta_interna": "/cvs/ai/translate-experience",
+      "operacion_apim": "cvs-ai-translate-experience",
+      "destino": "cvs",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "GET",
+      "ruta_interna": "/jobs",
+      "operacion_apim": "get-jobs",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "POST",
+      "ruta_interna": "/jobs",
+      "operacion_apim": "post-jobs",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "GET",
+      "ruta_interna": "/jobs/{id}",
+      "operacion_apim": "get-job-by-id",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "PUT",
+      "ruta_interna": "/jobs/{id}",
+      "operacion_apim": "put-jobs",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "DELETE",
+      "ruta_interna": "/jobs/{id}",
+      "operacion_apim": "delete-jobs",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "GET",
+      "ruta_interna": "/applications",
+      "operacion_apim": "get-applications",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "POST",
+      "ruta_interna": "/applications",
+      "operacion_apim": "create-application",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "GET",
+      "ruta_interna": "/applications/{id}",
+      "operacion_apim": "get-application-by-id",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "PUT",
+      "ruta_interna": "/applications/{id}",
+      "operacion_apim": "update-application-status",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "DELETE",
+      "ruta_interna": "/applications/{id}",
+      "operacion_apim": "delete-application",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "PUT",
+      "ruta_interna": "/admin/applications/{id}/status",
+      "operacion_apim": "admin-update-application-status",
+      "destino": "ofertas",
+      "rol_apim": "override"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "GET",
+      "ruta_interna": "/alerts",
+      "operacion_apim": "get-alerts",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "PUT",
+      "ruta_interna": "/alerts",
+      "operacion_apim": "put-alerts",
+      "destino": "ofertas",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "brecha-cursos",
+      "metodo": "GET",
+      "ruta_interna": "/skills-gap",
+      "operacion_apim": "get-skills-gap",
+      "destino": "brecha",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "brecha-cursos",
+      "metodo": "GET",
+      "ruta_interna": "/courses",
+      "operacion_apim": "get-courses",
+      "destino": "brecha",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "brecha-cursos",
+      "metodo": "PUT",
+      "ruta_interna": "/skills-gap/input",
+      "operacion_apim": "put-skills-gap-input",
+      "destino": "brecha",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "PUT",
+      "ruta_interna": "/notifications/directory/me",
+      "operacion_apim": "notif-upsert-directory",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "POST",
+      "ruta_interna": "/notifications/devices",
+      "operacion_apim": "notif-register-device",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "DELETE",
+      "ruta_interna": "/notifications/devices/{token}",
+      "operacion_apim": "notif-delete-device",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "GET",
+      "ruta_interna": "/notifications",
+      "operacion_apim": "notif-list",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "GET",
+      "ruta_interna": "/notifications/unread-count",
+      "operacion_apim": "notif-unread-count",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "PATCH",
+      "ruta_interna": "/notifications/{id}/read",
+      "operacion_apim": "notif-mark-read",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "POST",
+      "ruta_interna": "/notifications/read-all",
+      "operacion_apim": "notif-mark-all-read",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    },
+    {
+      "servicio": "notificaciones",
+      "metodo": "POST",
+      "ruta_interna": "/notifications/hub/negotiate",
+      "operacion_apim": "notif-hub-negotiate",
+      "destino": "notificaciones",
+      "rol_apim": "delete"
+    }
+  ]
+}
