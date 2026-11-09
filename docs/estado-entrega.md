@@ -26,6 +26,34 @@
 
 En una sesión anterior, Android registró `200` en `GET /api/v1/cvs` y `GET /api/v1/jobs`, y `409 SKILLS_INPUT_REQUIRED` en `GET /api/v1/skills-gap`. El antecedente carece de traza que identifique la revisión desplegada.
 
+## Alcance E2E confirmado por el equipo — 8 de noviembre de 2026
+
+El equipo informó que **Android 0.7.2** está disponible en Firebase App Distribution.
+Esta publicación **no certifica** el inicio de sesión en esa APK: las respuestas
+`200` registradas previamente para `/api/v1/cvs` y `/api/v1/jobs` corresponden a
+una ejecución de Android en modo *debug*. Si la autenticación falla en 0.7.2,
+registrar el texto exacto del error, el dispositivo, la versión instalada y
+la fecha/hora, sin compartir ID tokens ni datos personales.
+
+**Plan de pruebas de Fase II:**
+
+- **E2E disponibles para ejecución:** Ofertas, Postulaciones, Brecha y Notificaciones.
+  «Disponibles» no significa «pasaron»: registrar cada ejecución, código HTTP,
+  condiciones y resultado. Las operaciones administrativas de plantillas de
+  Notificaciones requieren comprobar primero su publicación en APIM.
+- **E2E temporalmente bloqueados:** CVs, generación de PDF y operaciones de IA.
+  Según el estado comunicado por el equipo, Pérez debe cargar las plantillas y
+  resolver la respuesta `500` de IA. Las pruebas locales de CVs que figuran más
+  arriba siguen siendo evidencia **local**, no validación de estas E2E.
+- **Trabajo futuro, fuera del cierre de Fase II:** ciclo FCM del **cliente Android**
+  (registro, renovación y eliminación del token, recepción en primer y segundo
+  plano, navegación al aviso). Se conservan el contrato de dispositivos, el
+  código de FCM del backend y sus pruebas. Las pruebas del backend no demuestran
+  entrega real a un dispositivo.
+
+El objetivo inmediato es completar las E2E disponibles con cuentas y datos
+sintéticos, sin alterar información productiva.
+
 ## Pendientes concretos
 
 | Responsable | Acción requerida |
@@ -36,4 +64,4 @@ En una sesión anterior, Android registró `200` en `GET /api/v1/cvs` y `GET /ap
 | Usuarios | Corregir las comillas del ejemplo de dirección en el contrato original y documentar las cabeceras de sesión. |
 | Brecha y Notificaciones | Acordar la transformación de cursos y el disparador, implementar el productor y verificar Service Bus, deduplicación y entrega. |
 | Ofertas y entorno local | Iniciar Docker y ejecutar la suite Maven completa para cubrir persistencia y Swagger con Testcontainers. |
-| Android y Notificaciones | Completar y probar registro, renovación y baja del token FCM, recepción en ambos estados y apertura del aviso persistido. |
+| Android y Notificaciones | El ciclo FCM del cliente Android queda como **trabajo futuro fuera del cierre de Fase II**. Se conserva la cobertura documental y las pruebas del backend. |

@@ -2,6 +2,10 @@
 
 Importe [cvexpert.postman_collection.json](cvexpert.postman_collection.json) y duplique el [entorno de ejemplo](apim.postman_environment.json). La colección combina escenarios principales, comprobaciones de seguimiento y negativas. La [matriz](../docs/matriz-trazabilidad.md) identifica la solicitud principal de cada operación. Los cuerpos se obtienen de los contratos, DTO o colecciones de origen y se validan localmente con los esquemas.
 
+## Orden de pruebas para la entrega
+
+Priorizar **Ofertas, Postulaciones, Brecha y Notificaciones** en el entorno E2E autorizado. Las E2E de **CVs, PDF e IA** están temporalmente bloqueadas por plantillas pendientes y un error `500` de IA; el ciclo local de CVs no sustituye esas pruebas. El registro/baja de dispositivos en Postman comprueba los endpoints REST, **no** la recepción FCM en Android, que corresponde a trabajo futuro. Android **0.7.2** fue anunciada para Firebase; los resultados de una versión debug anterior no certifican esa APK.
+
 ## Entorno APIM
 
 | Variable | Configuración |
