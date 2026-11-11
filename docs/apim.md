@@ -18,14 +18,15 @@ nombres de los recursos de Azure no van aquí porque el repo es público.
 | `/profiles/{id}`, `/profiles/{id}/sessions`, `/profiles/{id}/export` | Usuarios | `perfiles` |
 | `/legal/terms`, `/legal/privacy` | Usuarios | `legales` |
 | `/help` | Usuarios | `ayuda` |
-| `/cvs`, `/cvs/{id}`, `/cvs/ai/expand-experience`, `/cvs/ai/translate-experience` | CVs | `curriculos` |
+| `/cvs`, `/cvs/{id}`, `/cvs/ai/expand-experience`, `/cvs/ai/translate-experience`, `/cvs/ai/generate-text`, `/cvs/ai/generate-cv` | CVs | `curriculos` |
 | `/templates`, `/templates/{id}` | CVs | `plantillas` |
 | `/jobs`, `/jobs/{id}` | Ofertas y Postulaciones | `ofertas` |
 | `/applications`, `/applications/{id}` | Ofertas y Postulaciones | `postulaciones` |
 | `/alerts` | Ofertas y Postulaciones | `alertas` |
 | `/admin/applications/{id}/status` | Ofertas y Postulaciones | `administracion` |
 | `/skills-gap`, `/skills-gap/input`, `/courses` | Brecha y Cursos | `brecha-habilidades` |
-| `/notifications/...` (8 operaciones; `/notifications/templates` todavía no) | Notificaciones | `notificaciones` |
+| `/notifications/...` (8 operaciones) | Notificaciones | `notificaciones` |
+| `/notifications/templates`, `/notifications/templates/{type}/{language}` (solo admin) | Notificaciones | `notificaciones` |
 
 APIM le quita `/api/v1` a la ruta antes de reenviarla: `/api/v1/cvs/1` llega al backend
 como `/cvs/1`.
@@ -43,15 +44,16 @@ para ordenar el APIM por módulo. Una operación nueva va en los dos.
    Los `OPTIONS` no se validan.
 3. **Identidad.** Pone `X-User-Id` (claim `sub`) y `X-User-Email` (claim `email`). Si el
    cliente los manda, los pisa. El cliente nunca debe mandarlos.
-4. **Rol.** Borra cualquier `X-User-Role` que mande el cliente. Solo
-   `/admin/applications/{id}/status` manda `X-User-Role: admin`, y solo si el correo está
-   en la lista de administradores de APIM; si no está, responde 403 sin llamar al backend.
+4. **Rol.** Borra cualquier `X-User-Role` que mande el cliente. Solo las rutas de admin
+   (`/admin/applications/{id}/status` y `/notifications/templates/...`) mandan
+   `X-User-Role: admin`, y solo si el correo está en la lista de administradores de APIM; si
+   no está, responde 403 sin llamar al backend.
 5. **Certificado.** Presenta el certificado de cliente al backend (ver
    [certificado-apim.md](certificado-apim.md)).
 
 APIM no cachea respuestas, no reescribe códigos de estado ni cuerpos de error, y no limita
-el tamaño de las peticiones. El timeout hacia el backend es de 120 s en `/cvs/ai/*` y el
-de defecto en el resto.
+el tamaño de las peticiones. El timeout hacia el backend es de 180 s en `/cvs/ai/generate-cv`,
+120 s en el resto de `/cvs/ai/*` y el de defecto en las demás.
 
 **Agregar un administrador** implica cambiar dos lugares: `ADMIN_EMAILS` del App Service
 de Usuarios y la lista de administradores de APIM (un named value).

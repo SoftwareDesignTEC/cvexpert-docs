@@ -24,7 +24,7 @@ piden por el canal privado del equipo; no van en este repo.
 4. **Probar:** la URL directa del App Service tiene que responder 403, y la ruta de health
    200.
 
-## Estado (8 nov 2026)
+## Estado (10 nov 2026)
 
 | Servicio | Certificado exigido |
 |---|---|
@@ -32,7 +32,7 @@ piden por el canal privado del equipo; no van en este repo.
 | Brecha y Cursos | Sí |
 | Notificaciones | Sí |
 | Ofertas y Postulaciones | Sí |
-| CVs | **No todavía** |
+| CVs | Sí |
 
 ## Rotarlo
 
