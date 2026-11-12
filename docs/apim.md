@@ -24,7 +24,7 @@ nombres de los recursos de Azure no van aquí porque el repo es público.
 | `/applications`, `/applications/{id}` | Ofertas y Postulaciones | `postulaciones` |
 | `/alerts` | Ofertas y Postulaciones | `alertas` |
 | `/admin/applications/{id}/status` | Ofertas y Postulaciones | `administracion` |
-| `/skills-gap`, `/skills-gap/input`, `/courses` | Brecha y Cursos | `brecha-habilidades` |
+| `/skills-gap`, `/skills-gap/input`, `/skills-gap/evaluate`, `/skills-gap/recommendations`, `/courses` | Brecha y Cursos | `brecha-habilidades` |
 | `/notifications/...` (8 operaciones) | Notificaciones | `notificaciones` |
 | `/notifications/templates`, `/notifications/templates/{type}/{language}` (solo admin) | Notificaciones | `notificaciones` |
 
