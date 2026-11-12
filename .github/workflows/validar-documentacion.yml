@@ -1,0 +1,33 @@
+name: Validar documentación CVExpert
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar validadores
+        run: python -m pip install -r requirements-docs.txt
+      - name: Contratos, procedencia, eventos, matriz, Postman, enlaces y secretos
+        run: python scripts/validar_cobertura.py
+      - name: Sintaxis de scripts Postman
+        run: node scripts/ejecutar_postman.cjs --sintaxis
+      - name: Comprobar que el entorno de ejemplo no envía solicitudes
+        run: |
+          npm install --prefix "$RUNNER_TEMP/cvexpert-newman" --no-audit --no-fund --ignore-scripts newman@6.2.3
+          NODE_PATH="$RUNNER_TEMP/cvexpert-newman/node_modules" node scripts/ejecutar_postman.cjs --comprobar-bloqueo
