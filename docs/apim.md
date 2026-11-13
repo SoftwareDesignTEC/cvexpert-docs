@@ -20,7 +20,7 @@ nombres de los recursos de Azure no van aquí porque el repo es público.
 | `/help` | Usuarios | `ayuda` |
 | `/cvs`, `/cvs/{id}`, `/cvs/ai/expand-experience`, `/cvs/ai/translate-experience`, `/cvs/ai/generate-text`, `/cvs/ai/generate-cv` | CVs | `curriculos` |
 | `/templates`, `/templates/{id}` | CVs | `plantillas` |
-| `/jobs`, `/jobs/{id}` | Ofertas y Postulaciones | `ofertas` |
+| `/jobs`, `/jobs/{id}`, `/jobs/refresh` | Ofertas y Postulaciones | `ofertas` |
 | `/applications`, `/applications/{id}` | Ofertas y Postulaciones | `postulaciones` |
 | `/alerts` | Ofertas y Postulaciones | `alertas` |
 | `/admin/applications/{id}/status` | Ofertas y Postulaciones | `administracion` |
@@ -53,7 +53,8 @@ para ordenar el APIM por módulo. Una operación nueva va en los dos.
 
 APIM no cachea respuestas, no reescribe códigos de estado ni cuerpos de error, y no limita
 el tamaño de las peticiones. El timeout hacia el backend es de 180 s en `/cvs/ai/generate-cv`,
-120 s en el resto de `/cvs/ai/*` y el de defecto en las demás.
+120 s en el resto de `/cvs/ai/*` y en `POST /jobs/refresh` (hace varias búsquedas en
+JSearch), y el de defecto en las demás.
 
 **Agregar un administrador** implica cambiar dos lugares: `ADMIN_EMAILS` del App Service
 de Usuarios y la lista de administradores de APIM (un named value).
