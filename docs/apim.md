@@ -18,7 +18,7 @@ nombres de los recursos de Azure no van aquí porque el repo es público.
 | `/profiles/{id}`, `/profiles/{id}/sessions`, `/profiles/{id}/export` | Usuarios | `perfiles` |
 | `/legal/terms`, `/legal/privacy` | Usuarios | `legales` |
 | `/help` | Usuarios | `ayuda` |
-| `/cvs`, `/cvs/{id}`, `/cvs/ai/expand-experience`, `/cvs/ai/translate-experience`, `/cvs/ai/generate-text`, `/cvs/ai/generate-cv` | CVs | `curriculos` |
+| `/cvs`, `/cvs/{id}`, `/cvs/ai/expand-experience`, `/cvs/ai/translate-experience`, `/cvs/ai/generate-text`, `/cvs/ai/generate-cv`, `/cvs/photos` (multipart) | CVs | `curriculos` |
 | `/templates`, `/templates/{id}` | CVs | `plantillas` |
 | `/jobs`, `/jobs/{id}`, `/jobs/refresh` | Ofertas y Postulaciones | `ofertas` |
 | `/applications`, `/applications/{id}` | Ofertas y Postulaciones | `postulaciones` |
@@ -59,7 +59,24 @@ backend. La tabla de límites de Azure indica 30 s de duración total en Consump
 13 de noviembre de 2026 una petición de prueba de 45 s terminó con 200, así que ese tope no
 se está aplicando. El timeout hacia el backend es de 180 s en `/cvs/ai/generate-cv`,
 120 s en el resto de `/cvs/ai/*` y en `POST /jobs/refresh` (hace varias búsquedas en
-JSearch), y el de defecto en las demás.
+JSearch), 60 s en `POST /cvs/photos`, y el de defecto en las demás.
+
+Las fotos de los currículums no pasan por APIM al leerse: CVs las sube a un contenedor de
+Azure Storage con lectura anónima por blob (no se puede listar) y la web las pide directo
+a Storage. Ese servicio tiene su propia regla de CORS (solo `GET`, cualquier origen), que el
+generador de PDF necesita para leer los bytes de la imagen.
+
+**Errores del gateway.** Cuando el problema es de APIM y no del backend, todas las APIs de
+CVExpert responden JSON con un `code` propio (con CORS, para que el navegador lo lea):
+
+| Caso | Respuesta |
+|---|---|
+| El backend no responde dentro del timeout | `504` `{"code":"GATEWAY_TIMEOUT"}` |
+| APIM no puede conectar con el backend | `503` `{"code":"SERVICE_UNAVAILABLE"}` |
+| El backend devuelve 502, 503 o 504 sin JSON (por ejemplo, la página de App Service mientras reinicia) | `503` `{"code":"SERVICE_UNAVAILABLE"}` |
+
+Los errores que el backend devuelve en JSON (como el `503` del importador de Ofertas) pasan
+sin cambios. Sin esta regla, un timeout salía como `500` `"Internal server error"`.
 
 **Agregar un administrador** implica cambiar dos lugares: `ADMIN_EMAILS` del App Service
 de Usuarios y la lista de administradores de APIM (un named value).
