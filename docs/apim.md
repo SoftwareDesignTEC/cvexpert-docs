@@ -45,14 +45,19 @@ para ordenar el APIM por módulo. Una operación nueva va en los dos.
 3. **Identidad.** Pone `X-User-Id` (claim `sub`) y `X-User-Email` (claim `email`). Si el
    cliente los manda, los pisa. El cliente nunca debe mandarlos.
 4. **Rol.** Borra cualquier `X-User-Role` que mande el cliente. Solo las rutas de admin
-   (`/admin/applications/{id}/status` y `/notifications/templates/...`) mandan
+   (`/admin/applications/{id}/status`, `/notifications/templates/...` y las escrituras de
+   ofertas `POST /jobs`, `PUT /jobs/{id}` y `DELETE /jobs/{id}`) mandan
    `X-User-Role: admin`, y solo si el correo está en la lista de administradores de APIM; si
    no está, responde 403 sin llamar al backend.
 5. **Certificado.** Presenta el certificado de cliente al backend (ver
    [certificado-apim.md](certificado-apim.md)).
 
-APIM no cachea respuestas, no reescribe códigos de estado ni cuerpos de error, y no limita
-el tamaño de las peticiones. El timeout hacia el backend es de 180 s en `/cvs/ai/generate-cv`,
+APIM no cachea respuestas, no reescribe códigos de estado ni cuerpos de error, y ninguna
+política valida el tipo de contenido ni lee el cuerpo: JSON y `multipart/form-data` pasan
+igual. El plan Consumption acepta cuerpos de hasta 1 GiB; el tope real lo pone cada
+backend. La tabla de límites de Azure indica 30 s de duración total en Consumption, pero el
+13 de noviembre de 2026 una petición de prueba de 45 s terminó con 200, así que ese tope no
+se está aplicando. El timeout hacia el backend es de 180 s en `/cvs/ai/generate-cv`,
 120 s en el resto de `/cvs/ai/*` y en `POST /jobs/refresh` (hace varias búsquedas en
 JSearch), y el de defecto en las demás.
 
