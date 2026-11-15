@@ -34,14 +34,15 @@ Las rutas públicas corresponden al [inventario de APIM](../contratos/apim-rutas
 | `POST /cvs/ai/expand-experience` | /api/v1/cvs/ai/expand-experience | Identidad propia y propiedad del recurso cuando aplica | ExpandExperienceRequest | 200 ExpandExperienceResponse | Experiencia laboral |
 | `POST /cvs/ai/translate-experience` | /api/v1/cvs/ai/translate-experience | Identidad propia y propiedad del recurso cuando aplica | TranslateExperienceRequest | 200 TranslateExperienceResponse | Experiencia laboral |
 
-## Ofertas y postulaciones (13)
+## Ofertas y postulaciones (14)
 
-[OpenAPI](../contratos/ofertas-postulaciones.openapi.yaml) · [Origen fijado](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/blob/822c9ebe84e3a75671a702a30cd3978c92d0337b/docs/openapi.yaml) · [Código](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/tree/822c9ebe84e3a75671a702a30cd3978c92d0337b/src/main/java/com/cvexpert/ofertas/adapter/in/web) · [Pruebas de origen](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/tree/822c9ebe84e3a75671a702a30cd3978c92d0337b/src/test/java/com/cvexpert/ofertas/adapter/in/web)
+[OpenAPI](../contratos/ofertas-postulaciones.openapi.yaml) · [Origen fijado](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/blob/2e9ea432b4b10f5fbe53941da2f824d084a908c7/docs/openapi.yaml) · [Código](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/tree/2e9ea432b4b10f5fbe53941da2f824d084a908c7/src/main/java/com/cvexpert/ofertas/adapter/in/web) · [Pruebas de origen](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/tree/2e9ea432b4b10f5fbe53941da2f824d084a908c7/src/test/java/com/cvexpert/ofertas/adapter/in/web)
 
 | Operación interna | Ruta APIM registrada | Permisos | Solicitud | Respuesta de éxito | Carpeta Postman |
 | --- | --- | --- | --- | --- | --- |
 | `GET /jobs` | /api/v1/jobs | Consulta general | — | 200 JobOfferPage | Lecturas |
 | `POST /jobs` | /api/v1/jobs | Administrador | JobOfferInput | 201 JobOffer | Administración de ofertas |
+| `POST /jobs/refresh` | — | Consulta general | — | 200 object | Administración de ofertas |
 | `GET /jobs/{id}` | /api/v1/jobs/{id} | Consulta general | — | 200 JobOffer | Lecturas |
 | `PUT /jobs/{id}` | /api/v1/jobs/{id} | Administrador | JobOfferInput | 200 JobOffer | Administración de ofertas |
 | `DELETE /jobs/{id}` | /api/v1/jobs/{id} | Administrador | — | 204 — | Administración de ofertas |

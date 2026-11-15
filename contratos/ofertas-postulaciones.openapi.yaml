@@ -56,9 +56,35 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
         - $ref: '#/components/parameters/Search'
+        - name: modality
+          in: query
+          description: Solo estas modalidades. Uno o varios, separados por coma (`remote,hybrid`) o repitiendo el parámetro.
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [remote, on-site, hybrid]
+          style: form
+          explode: false
+        - name: postedSinceDays
+          in: query
+          description: Solo las publicadas en los últimos N días (`7` = "Últimos 7 días").
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 365
+        - name: minMatch
+          in: query
+          description: |
+            Compatibilidad mínima con el perfil de quien consulta. Si el usuario no guardó su
+            perfil, ninguna oferta la alcanza (salvo con 0). `totalRecords` cuenta solo las que pasan.
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
       responses:
         '200':
-          description: Página de ofertas. `matchScore` falta si el usuario no guardó su perfil de emparejamiento.
+          description: Página de ofertas, ya filtrada (`totalRecords` cuenta las filtradas). `matchScore` falta si el usuario no guardó su perfil de emparejamiento.
           content:
             application/json:
               schema:
@@ -96,6 +122,33 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
+  /jobs/refresh:
+    post:
+      tags: [Ofertas]
+      summary: Buscar ofertas nuevas en JSearch ahora
+      description: |
+        Corre el importador en ese momento (las 6 búsquedas configuradas). Cualquier usuario
+        puede pedirlo; entre una corrida y otra hay que esperar 10 minutos para cuidar el plan
+        de la API (429). Si el importador está apagado (sin clave), 503.
+      operationId: refreshJobs
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/UserEmail'
+      responses:
+        '200':
+          description: Cuántas ofertas entraron.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created: {type: integer}
+                  updated: {type: integer}
+                  failedQueries: {type: integer}
+        '429':
+          description: Se buscaron ofertas hace menos de 10 minutos (`REFRESH_TOO_SOON`).
+        '503':
+          description: El importador está apagado (`REFRESH_DISABLED`).
   /jobs/{id}:
     parameters:
       - $ref: '#/components/parameters/Id'
@@ -466,7 +519,7 @@ components:
     ApplicationStatus:
       type: string
       description: Columnas del Kanban, iguales a la Fase I
-      enum: [applied, in-progress, interview, rejected]
+      enum: [interested, applied, in-progress, interview, rejected]
     EpochMillis:
       type: integer
       format: int64
@@ -521,6 +574,13 @@ components:
           description: Experiencia mínima en años (nuevo en la Fase II, para la compatibilidad)
         salary:
           $ref: '#/components/schemas/Salary'
+        applyUrl:
+          type: string
+          format: uri
+          description: >-
+            Página donde la persona se postula de verdad (el sitio de la empresa o de la bolsa de
+            empleo). La traen las ofertas reales importadas de JSearch; falta en las que crea un
+            administrador sin enlace. Nuevo en la Fase II.
 
     JobOffer:
       allOf:
@@ -582,6 +642,12 @@ components:
           example: '123'
         notes:
           type: string
+        initialStatus:
+          description: |
+            Columna donde se guarda (opcional; sin valor, `applied`). El `status` que mandan los
+            clientes de la Fase I se sigue ignorando.
+          allOf:
+            - $ref: '#/components/schemas/ApplicationStatus'
       additionalProperties: true
 
     UpdateStatusRequest:

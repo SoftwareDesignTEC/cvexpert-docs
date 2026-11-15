@@ -111,6 +111,9 @@ def groups():
             o("GET", "/jobs/{id}", title="Verificar oferta actualizada", path_vars={"id": "runJobId"}, checks={"title": offers(JOB_UPDATE)["title"]}),
             o("DELETE", "/jobs/{id}", path_vars={"id": "runJobId"}),
             o("GET", "/jobs/{id}", title="Verificar eliminación de oferta", path_vars={"id": "runJobId"}, status=[404]),
+            # Corre la búsqueda en JSearch en el momento y espera 200. Entre una corrida y otra
+            # hay 10 minutos de espera: repetir la colección antes de eso da 429.
+            o("POST", "/jobs/refresh"),
         ],
         "Ciclo de postulaciones": [
             o("POST", "/applications", body={"jobOfferId": "{{fixtureJobId}}", "notes": "Me interesa"}, capture={"id": "runApplicationId"}, reset=["runApplicationId"], checks={"jobOfferId": "{{fixtureJobId}}", "status": "applied"}),
