@@ -72,7 +72,7 @@ def inventory():
         if key in OBSERVED:
             observation += "; " + OBSERVED[key]
         deployment = "Registrada en APIM; revisión backend pendiente" if mapping else "Sin publicación registrada"
-        if route.startswith("/jobs") and method != "GET" and mapping and mapping["rol_apim"] == "delete":
+        if mapping and mapping["rol_apim"] == "delete" and "X-User-Role" in auth:
             observation += "; la política elimina X-User-Role requerido por el backend"
         proof = "Escenario positivo APIM pendiente" if mapping else "Escenario backend definido"
         if key == ("cvs", "GET", "/cvs"):

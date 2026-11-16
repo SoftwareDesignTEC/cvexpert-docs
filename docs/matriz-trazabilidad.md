@@ -42,7 +42,7 @@ Las rutas públicas corresponden al [inventario de APIM](../contratos/apim-rutas
 | --- | --- | --- | --- | --- | --- |
 | `GET /jobs` | /api/v1/jobs | Consulta general | — | 200 JobOfferPage | Lecturas |
 | `POST /jobs` | /api/v1/jobs | Administrador | JobOfferInput | 201 JobOffer | Administración de ofertas |
-| `POST /jobs/refresh` | — | Consulta general | — | 200 object | Administración de ofertas |
+| `POST /jobs/refresh` | /api/v1/jobs/refresh | Consulta general | — | 200 object | Administración de ofertas |
 | `GET /jobs/{id}` | /api/v1/jobs/{id} | Consulta general | — | 200 JobOffer | Lecturas |
 | `PUT /jobs/{id}` | /api/v1/jobs/{id} | Administrador | JobOfferInput | 200 JobOffer | Administración de ofertas |
 | `DELETE /jobs/{id}` | /api/v1/jobs/{id} | Administrador | — | 204 — | Administración de ofertas |
