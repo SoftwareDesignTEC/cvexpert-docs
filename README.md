@@ -7,7 +7,7 @@ Este repositorio reúne los contratos de los cinco microservicios, sus escenario
 | [Contratos OpenAPI](contratos/README.md) | Especificaciones, revisiones de origen, consulta con Swagger y mantenimiento |
 | [Matriz de trazabilidad](docs/matriz-trazabilidad.md) | Operaciones, permisos, DTO, Postman y evidencia por ruta |
 | [Postman y Newman](postman/README.md) | Colección importable, configuración y ejecución por carpeta |
-| [Arquitectura](docs/arquitectura.md) y [seguridad](docs/seguridad-apim.md) | Límites de confianza, almacenamiento, enrutamiento y despliegue |
+| [Documentación de arquitectura](docs/README.md) | Índice de repositorios, [arquitectura](docs/arquitectura.md), [flujos](docs/flujos.md), [seguridad](docs/seguridad.md), [almacenamiento](docs/almacenamiento.md) y [despliegue](docs/despliegue.md) |
 | [Notificaciones y eventos](docs/notificaciones.md) | Service Bus, SignalR, correo, FCM y adaptación de cursos |
 | [Estado de entrega](docs/estado-entrega.md) | Resultados reproducidos y verificaciones pendientes |
 
