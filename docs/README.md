@@ -1,6 +1,6 @@
 # Documentación de arquitectura de CVExpert (Fase II)
 
-CVExpert son cinco microservicios, cada uno en su repositorio, detrás de Azure API Management (APIM), y dos clientes con la misma funcionalidad: una web en React y una app Android. Esta carpeta describe cómo encajan esas piezas, cómo se protegen, dónde guarda sus datos cada servicio y cómo se despliegan.
+CVExpert son cinco microservicios, cada uno en su repositorio, detrás de Azure API Management (APIM), y dos clientes: una web en React y una app Android. La paridad funcional entre ambos es un objetivo; todavía existen integraciones pendientes en la web, detalladas en la [auditoría](auditoria.md) y el [estado de entrega](estado-entrega.md). Esta carpeta describe cómo encajan esas piezas, cómo se protegen, dónde guarda sus datos cada servicio y cómo se despliegan.
 
 Todo lo que aparece aquí se sacó del código, la configuración, los pipelines y los README de cada repositorio (ramas `main` revisadas el 2026-11-15, salvo donde se indica otra). Lo que no se pudo confirmar en el código está marcado como **por confirmar**.
 
