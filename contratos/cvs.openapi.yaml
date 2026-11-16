@@ -130,6 +130,52 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /cvs/photos:
+    post:
+      tags: [cvs]
+      summary: Sube la foto de perfil para un CV y devuelve su URL pública
+      description: >
+        No está atado a un id de CV: el usuario elige la foto antes de que
+        el CV exista. El archivo se guarda en Azure Blob Storage, en un
+        contenedor con lectura anónima a nivel de blob (sin firma, sin
+        vencimiento) — la URL que se devuelve es pública y permanente, para
+        que se pueda usar directo en un <img>, en el renderizador de
+        Android y en el generador de PDF sin encabezados de autenticación.
+        El nombre del archivo en el storage es un UUID aleatorio, nunca el
+        id del usuario ni el del CV. personalInfo.photoUrl acepta tanto
+        esta URL como, por compatibilidad con CVs viejos, un data URL
+        embebido; no hay migración automática entre ambas formas.
+      parameters:
+        - $ref: "#/components/parameters/XUserId"
+        - $ref: "#/components/parameters/XUserEmail"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Imagen a subir. image/jpeg, image/png o image/webp. Máximo 5 MB.
+      responses:
+        "201":
+          description: Archivo subido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhotoUploadResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+
   /templates:
     get:
       tags: [templates]
@@ -183,7 +229,10 @@ paths:
     post:
       tags: [ai]
       summary: Expande la descripción de una experiencia laboral con IA
-      description: Sin estado; no requiere que el CV esté guardado.
+      description: >
+        Sin estado; no requiere que el CV esté guardado. Si el texto no
+        tiene sentido (irrelevante, ilegible, vacío de contenido real),
+        responde 400 en vez de inventar una descripción.
       parameters:
         - $ref: "#/components/parameters/XUserId"
         - $ref: "#/components/parameters/XUserEmail"
@@ -209,7 +258,10 @@ paths:
     post:
       tags: [ai]
       summary: Traduce una experiencia no laboral con IA
-      description: Sin estado; no requiere que el CV esté guardado.
+      description: >
+        Sin estado; no requiere que el CV esté guardado. Si el texto no
+        tiene sentido (irrelevante, ilegible, vacío de contenido real),
+        responde 400 en vez de inventar una traducción.
       parameters:
         - $ref: "#/components/parameters/XUserId"
         - $ref: "#/components/parameters/XUserEmail"
@@ -226,6 +278,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TranslateExperienceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /cvs/ai/generate-text:
+    post:
+      tags: [ai]
+      summary: Genera un texto suelto con IA (perfil profesional o descripción de experiencia)
+      description: >
+        Sin estado y sin guardar nada: el cliente recibe el texto sugerido,
+        lo muestra para revisión y recién lo persiste cuando el usuario
+        guarda el CV por el flujo normal (POST/PUT /cvs). Si el contexto
+        no tiene sentido (irrelevante, ilegible, vacío de contenido real),
+        responde 400 en vez de inventar un texto.
+      parameters:
+        - $ref: "#/components/parameters/XUserId"
+        - $ref: "#/components/parameters/XUserEmail"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateTextRequest"
+      responses:
+        "200":
+          description: Texto sugerido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateTextResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /cvs/ai/generate-cv:
+    post:
+      tags: [ai]
+      summary: Genera y guarda un CV completo a partir de un texto libre dictado/escrito
+      description: >
+        Síncrono: responde en la misma llamada con el CV ya creado, listo
+        para abrir en el editor sin un GET extra. personalInfo.email sale
+        de X-User-Email, igual que en el resto del contrato; el body no lo
+        incluye. title y templateId son opcionales: si se omiten, el
+        servidor pone "CV generado el <fecha>" y la plantilla "minimal".
+        El usuario los cambia después desde el editor. La IA puede dejar
+        listas vacías si el texto no menciona esa sección. Si una
+        experiencia o estudio no trae fecha de inicio, se guarda con la
+        fecha del día en que se generó el CV (no se descarta), para que el
+        usuario la corrija en el editor en vez de perder la fila. Solo se
+        descarta una fila cuando falta un dato que no se puede completar
+        con un valor por defecto razonable (ej. una experiencia type
+        "formal" sin company). Si el relato completo no tiene sentido
+        (irrelevante, ilegible, vacío de contenido real), responde 400 y
+        no crea ningún CV.
+      parameters:
+        - $ref: "#/components/parameters/XUserId"
+        - $ref: "#/components/parameters/XUserEmail"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateCvRequest"
+      responses:
+        "201":
+          description: CV generado y creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cv"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -279,6 +403,18 @@ components:
             $ref: "#/components/schemas/Error"
     NotFound:
       description: No existe o no pertenece al usuario autenticado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    PayloadTooLarge:
+      description: El archivo supera el tamaño máximo permitido
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnsupportedMediaType:
+      description: El tipo de archivo no está soportado
       content:
         application/json:
           schema:
@@ -370,12 +506,17 @@ components:
 
     WorkExperience:
       type: object
-      required: [id, company, position, startDate, current, description, type]
+      required: [id, position, startDate, current, description, type]
+      description: >
+        company es obligatoria solo cuando type es "formal" (empleo con una
+        empresa). En freelance, volunteer, school-project e informal puede
+        venir null u omitirse.
       properties:
         id:
           type: string
         company:
           type: string
+          nullable: true
         position:
           type: string
         startDate:
@@ -734,7 +875,7 @@ components:
 
     ExpandExperienceRequest:
       type: object
-      required: [company, position, description, type, language]
+      required: [company, position, description, type]
       properties:
         company:
           type: string
@@ -747,6 +888,7 @@ components:
         language:
           type: string
           enum: [es, en]
+          description: Opcional. Por defecto "es".
     ExpandExperienceResponse:
       type: object
       required: [description]
@@ -756,7 +898,7 @@ components:
 
     TranslateExperienceRequest:
       type: object
-      required: [type, position, description, language]
+      required: [type, position, description]
       properties:
         type:
           $ref: "#/components/schemas/NonLaborExperienceType"
@@ -769,6 +911,7 @@ components:
         language:
           type: string
           enum: [es, en]
+          description: Opcional. Por defecto "es".
     TranslateExperienceResponse:
       type: object
       required: [position, description]
@@ -777,3 +920,62 @@ components:
           type: string
         description:
           type: string
+
+    GenerateTextField:
+      type: string
+      enum: [profileBio, experienceDescription]
+      description: Qué campo se está redactando.
+
+    GenerateTextRequest:
+      type: object
+      required: [field, context]
+      properties:
+        field:
+          $ref: "#/components/schemas/GenerateTextField"
+        context:
+          type: string
+          description: >
+            Texto libre con lo que el cliente ya tenga a mano (puesto,
+            empresa, borrador del usuario, lo que sea relevante). El
+            servicio no valida su forma, solo lo usa como contexto del
+            prompt.
+        language:
+          type: string
+          enum: [es, en]
+          description: Opcional. Por defecto "es".
+    GenerateTextResponse:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+
+    PhotoUploadResponse:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          description: URL pública y permanente del archivo subido.
+
+    GenerateCvRequest:
+      type: object
+      required: [fullName, freeText]
+      properties:
+        title:
+          type: string
+          description: Opcional. Por defecto "CV generado el <fecha>".
+        templateId:
+          type: string
+          description: Opcional. Por defecto "minimal".
+        fullName:
+          type: string
+        phone:
+          type: string
+        freeText:
+          type: string
+          description: Texto dictado o escrito por el usuario describiendo su trayectoria.
+        language:
+          type: string
+          enum: [es, en]
+          description: Opcional. Por defecto "es".

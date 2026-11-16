@@ -3,6 +3,7 @@
 import argparse
 import csv
 import io
+import json
 
 from contratos import apim_routes, json_schema, operations, parameters, responses, schema_label, specifications
 from generar_postman_desde_openapi import build
@@ -23,6 +24,17 @@ OBSERVED = {
     ("brecha-cursos", "GET", "/skills-gap"): "409 SKILLS_INPUT_REQUIRED observado desde Android; backend/revisión sin traza",
 }
 
+# Informe fusionado de Cabrera (PR #3), sin IDs ARM exportados para estas rutas.
+REPORTED_APIM = {
+    ("cvs", "POST", "/cvs/ai/generate-text"),
+    ("cvs", "POST", "/cvs/ai/generate-cv"),
+    ("brecha-cursos", "POST", "/skills-gap/evaluate"),
+    ("brecha-cursos", "POST", "/skills-gap/recommendations"),
+    ("notificaciones", "GET", "/notifications/templates"),
+    ("notificaciones", "GET", "/notifications/templates/{type}/{language}"),
+    ("notificaciones", "PUT", "/notifications/templates/{type}/{language}"),
+}
+
 
 def access(service, method, route, params):
     headers = [name for (location, name), definition in params.items()
@@ -31,7 +43,7 @@ def access(service, method, route, params):
         return "Salud directa sin identidad de usuario", "Sonda local"
     if service == "brecha-cursos":
         required = " + X-User-Id" if route.startswith("/skills-gap") else ""
-        role = "Dueño de instantánea" if required else "Consulta de catálogo"
+        role = "Usuario autenticado; proyecciones informativas sin verificar titularidad" if route in {"/skills-gap/evaluate", "/skills-gap/recommendations"} else "Dueño de instantánea" if required else "Consulta de catálogo"
         return "Certificado cliente APIM → App Service" + required, role
     if "X-User-Role" in headers:
         role = "Administrador"
@@ -48,6 +60,16 @@ def access(service, method, route, params):
 
 def inventory():
     manifest = sources()
+    audit = json.loads((ROOT / "contratos/revisiones-auditoria.json").read_text(encoding="utf-8"))
+    deployments = {}
+    for repo in audit["repositorios"]:
+        for job in repo["jobs_despliegue_consultados"]:
+            if job["conclusion"] == "success" and any(
+                step["conclusion"] == "success" and step["name"] in {
+                    "Deploy to Azure App Service", "Deploy package with Entra token (no publish profile)", "Desplegar en App Service",
+                } for step in job["steps"]
+            ):
+                deployments[repo["repositorio"]] = job["url"]
     collection = build()
     published = apim_routes()
     requests = {
@@ -68,21 +90,24 @@ def inventory():
         key = service, method, route
         mapping = published.get(key)
         public_route = mapping["ruta_publica"] if mapping else ""
-        observation = f"ARM cv-api/{mapping['operacion_apim']}; destino {mapping['destino']}" if mapping else "Sin operación registrada en el inventario APIM"
+        observation = f"Inventario histórico ARM cv-api/{mapping['operacion_apim']}; destino {mapping['destino']}" if mapping else "Sin ID ARM en el inventario conservado"
+        reported = key in REPORTED_APIM
+        if reported:
+            observation += "; PR #3 informa registro y rechazo 401 sin token; sin traza autenticada ni revisión backend"
         if key in OBSERVED:
-            observation += "; " + OBSERVED[key]
-        deployment = "Registrada en APIM; revisión backend pendiente" if mapping else "Sin publicación registrada"
+            observation += "; antecedente del corte 2026-11-08: " + OBSERVED[key]
+        deployment = "Inventario APIM histórico; backend activo no verificado" if mapping else "Registro APIM informado en PR #3; backend activo no verificado" if reported else "Publicación APIM no acreditada"
         if mapping and mapping["rol_apim"] == "delete" and "X-User-Role" in auth:
             observation += "; la política elimina X-User-Role requerido por el backend"
-        proof = "Escenario positivo APIM pendiente" if mapping else "Escenario backend definido"
+        proof = "No ejecutado en esta actualización; escenario definido"
         if key == ("cvs", "GET", "/cvs"):
-            proof = "APIM negativo 401 ejecutado; positivo actual pendiente"
+            proof += "; histórico corte 2026-11-08: APIM negativo 401"
         if service == "cvs" and (route == "/cvs" and method == "POST" or route == "/cvs/{id}"):
-            proof = "Ciclo local con dobles ejecutado; APIM pendiente"
+            proof += "; histórico corte 2026-11-08: ciclo local con dobles"
         if key == ("cvs", "GET", "/templates"):
-            proof = "Catálogo local con doble ejecutado; APIM pendiente"
+            proof += "; histórico corte 2026-11-08: catálogo local con doble"
         if key in {("brecha-cursos", "GET", "/health"), ("brecha-cursos", "GET", "/skills-gap")}:
-            proof = "Newman local ejecutado; ver estado de entrega"
+            proof += "; histórico corte 2026-11-08: Newman local; ver estado de entrega"
         name = f"{service} | {method} {route}"
         status = "Ruta implementada en main"
         if route.endswith("/negotiate"):
@@ -95,23 +120,27 @@ def inventory():
             "servicio": service,
             "repositorio": repo,
             "revision": revision,
+            "sha_blob_openapi": info["sha"],
             "openapi": f"contratos/{service}.openapi.yaml",
             "origen": f"{repo}/blob/{revision}/{info['openapi']}",
             "metodo": method,
             "ruta_interna": route,
             "ruta_apim_confirmada": public_route,
-            "canal": "APIM" if mapping else "Backend directo",
+            "ruta_apim_reportada": "/api/v1" + route if reported else "",
+            "fuente_apim": "contratos/apim-rutas.json (corte 2026-11-08; incluye refresh del PR #4)" if mapping else "docs/seguridad-apim.md (PR #3, fusionado 2026-11-16)" if reported else "Sin evidencia de publicación",
+            "canal": "APIM inventariado" if mapping else "APIM informado; confirmar mapeo en ensayo" if reported else "Backend definido; APIM por confirmar",
             "autenticacion_backend": auth,
-            "autenticacion_apim": "Google ID Token (política revisada)" if mapping else "—",
+            "autenticacion_apim": "Google ID Token; comprobar autorización real en ensayo" if mapping or reported else "Publicación no verificada",
             "permisos": role,
             "parametros": "; ".join(f"{loc}:{name}{'*' if definition.get('required') else ''}" for (loc, name), definition in params.items()),
-            "solicitud": schema_label(json_schema(spec, op.get("requestBody", {}))),
+            "solicitud": "multipart/form-data: file (binary)" if "multipart/form-data" in op.get("requestBody", {}).get("content", {}) else schema_label(json_schema(spec, op.get("requestBody", {}))),
             "respuestas_exito": ", ".join(f"{code} {schema_label(json_schema(spec, codes[code]))}" for code in successes),
             "errores_openapi": ", ".join(f"{code} {schema_label(json_schema(spec, codes[code]))}" for code in errors),
             "carpeta_postman": requests[name],
             "solicitud_postman": name,
             "implementacion": status,
             "despliegue": deployment,
+            "evidencia_pipeline_despliegue": deployments.get(info["repo"], "Sin job de despliegue acreditado en la consulta; ver auditoría"),
             "prueba": proof,
             "evidencia_o_bloqueo": observation,
             "codigo": f"{repo}/tree/{revision}/{src}",
@@ -136,6 +165,8 @@ def markdown(rows):
         "",
         "Las rutas públicas corresponden al [inventario de APIM](../contratos/apim-rutas.json). Una ruta registrada identifica la configuración del gateway. El [estado de entrega](estado-entrega.md) identifica las llamadas ejecutadas. Los cambios de contrato y de implementación se detallan en la [auditoría](auditoria.md).",
         "",
+        "Corte 2026-11-16. El inventario ARM conservado tiene fecha 2026-11-08 e incorpora refresh mediante el PR #4. Las rutas indicadas como «informadas» proceden del informe de Cabrera fusionado en PR #3, sin identificadores ARM nuevos. Un rechazo 401 no verifica el backend. No se ejecutaron E2E de estas revisiones en esta actualización; los resultados anteriores son históricos. El CSV conserva por separado ambas procedencias, el blob y la evidencia por operación.",
+        "",
     ]
     for service, info in manifest["servicios"].items():
         subset = [row for row in rows if row["servicio"] == service]
@@ -149,7 +180,8 @@ def markdown(rows):
             "| --- | --- | --- | --- | --- | --- |",
         ])
         for row in subset:
-            lines.append(f"| `{row['metodo']} {row['ruta_interna']}` | {row['ruta_apim_confirmada'] or '—'} | {row['permisos']} | {row['solicitud']} | {row['respuestas_exito']} | {row['carpeta_postman']} |")
+            apim = row['ruta_apim_confirmada'] or (row['ruta_apim_reportada'] + ' (informada; sin ID ARM)' if row['ruta_apim_reportada'] else '—')
+            lines.append(f"| `{row['metodo']} {row['ruta_interna']}` | {apim} | {row['permisos']} | {row['solicitud']} | {row['respuestas_exito']} | {row['carpeta_postman']} |")
         lines.append("")
     return "\n".join(lines)
 

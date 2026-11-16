@@ -64,6 +64,17 @@ JOB_UPDATE = "Editar oferta (admin)"
 TEMPLATE = "/notifications/templates/{type}/{language}"
 
 
+def evaluation(*, text=False, empty=False):
+    """Proyecciones sintéticas; no requieren CV ni oferta persistidos."""
+    job = {"id": "job:test", "skills": [] if empty else ["Python", "SQL", "Docker"]}
+    if text:
+        job.update(description="Python avanzado y SQL básico.", requirements=["Docker intermediate"])
+    return {"cv": {"id": "cv:test", "skills": [
+        {"name": "Python", "level": "intermediate"},
+        {"name": "SQL", "level": "advanced"},
+    ]}, "jobs": [job]}
+
+
 def groups():
     return {
         "Lecturas": [
@@ -104,6 +115,20 @@ def groups():
             c("POST", "/cvs/ai/expand-experience", body=original("cvs", "POST /cvs/ai/expand-experience")),
             c("POST", "/cvs/ai/translate-experience", body=original("cvs", "POST /cvs/ai/translate-experience")),
         ],
+        "Generación de CV e IA": [
+            c("POST", "/cvs/ai/generate-text", body={"field": "profileBio", "context": "Experiencia de prueba en soporte técnico y documentación de sistemas.", "language": "es"}, nonempty=["text"]),
+            c("POST", "/cvs/ai/generate-text", title="Texto en inglés", body={"field": "experienceDescription", "context": "Provided technical support and documented software systems.", "language": "en"}, nonempty=["text"]),
+            c("POST", "/cvs/ai/generate-cv", body={"fullName": "Persona de prueba", "freeText": "Desarrollo software en Python y SQL. Colaboré en proyectos escolares de soporte técnico.", "language": "es"}, capture={"id": "runAiCvId"}, reset=["runAiCvId"], nonempty=["id", "templateId"]),
+            c("GET", "/cvs/{id}", title="Verificar CV generado", path_vars={"id": "runAiCvId"}, checks={"id": "{{runAiCvId}}"}),
+            c("DELETE", "/cvs/{id}", title="Limpiar CV generado", path_vars={"id": "runAiCvId"}),
+            c("GET", "/cvs/{id}", title="Verificar baja de CV generado", path_vars={"id": "runAiCvId"}, status=[404]),
+        ],
+        "Fotografías de CV": [
+            c("POST", "/cvs/photos", file_var="fixturePhotoPath", file_type="image/png", photo=True),
+            c("POST", "/cvs/photos", title="Fotografía sin identidad", file_var="fixturePhotoPath", file_type="image/png", role="none", status=[401]),
+            c("POST", "/cvs/photos", title="Tipo de archivo rechazado", file_var="fixtureUnsupportedPhotoPath", file_type="text/plain", status=[415]),
+            c("POST", "/cvs/photos", title="Archivo mayor de 5 MiB", file_var="fixtureOversizePhotoPath", file_type="image/png", status=[413]),
+        ],
         "Administración de ofertas": [
             o("POST", "/jobs", body=offers(JOB_CREATE), capture={"id": "runJobId"}, reset=["runJobId"], checks={"title": offers(JOB_CREATE)["title"]}),
             o("GET", "/jobs/{id}", title="Verificar oferta creada", path_vars={"id": "runJobId"}, checks={"id": "{{runJobId}}", "title": offers(JOB_CREATE)["title"]}),
@@ -113,7 +138,8 @@ def groups():
             o("GET", "/jobs/{id}", title="Verificar eliminación de oferta", path_vars={"id": "runJobId"}, status=[404]),
             # Corre la búsqueda en JSearch en el momento y espera 200. Entre una corrida y otra
             # hay 10 minutos de espera: repetir la colección antes de eso da 429.
-            o("POST", "/jobs/refresh"),
+            o("POST", "/jobs/refresh", refresh=True, reset=["runJobRefreshComplete"]),
+            o("POST", "/jobs/refresh", title="Recarga antes de diez minutos", needs=["runJobRefreshComplete"], status=[429], status_only=True),
         ],
         "Ciclo de postulaciones": [
             o("POST", "/applications", body={"jobOfferId": "{{fixtureJobId}}", "notes": "Me interesa"}, capture={"id": "runApplicationId"}, reset=["runApplicationId"], checks={"jobOfferId": "{{fixtureJobId}}", "status": "applied"}),
@@ -129,6 +155,13 @@ def groups():
         "Instantánea y brecha": [
             b("PUT", "/skills-gap/input", body={"skills": [{"skillName": "SQL", "level": "beginner"}]}),
             b("GET", "/skills-gap"),
+        ],
+        "Brecha por oferta": [
+            b("POST", "/skills-gap/evaluate", body=evaluation(text=True), checks={"cvId": "cv:test", "dataSource": "client_request"}, gap="levels"),
+            b("POST", "/skills-gap/evaluate", title="Compatibilidad sin texto", body=evaluation(), gap="names"),
+            b("POST", "/skills-gap/evaluate", title="Oferta sin habilidades", body=evaluation(empty=True), gap="empty"),
+            b("POST", "/skills-gap/recommendations", body=evaluation(), checks={"cvId": "cv:test", "dataSource": "client_request", "catalogStatus": "consulted"}, gap="courses"),
+            b("POST", "/skills-gap/recommendations", title="Catálogo innecesario", body=evaluation(empty=True), checks={"catalogStatus": "not_needed"}, gap="empty_courses"),
         ],
         "Directorio y dispositivos": [
             n("PUT", "/notifications/directory/me", body={"language": "es"}, checks={"language": "es"}),
@@ -151,6 +184,12 @@ def groups():
             n("GET", TEMPLATE, title="Verificar plantilla editada", template=True, updated_template=True, checks={"title": "Aviso de prueba", "body": "El estado de tu postulación cambió."}),
         ],
         "Negativas": [
+            c("POST", "/cvs/ai/generate-text", title="Campo IA inválido", body={"field": "unknown", "context": "Prueba", "language": "es"}, status=[400]),
+            c("POST", "/cvs/ai/generate-cv", title="IA sin nombre obligatorio", body={"freeText": "Prueba", "language": "es"}, status=[400]),
+            c("POST", "/cvs/ai/generate-text", title="IA sin identidad", body={"field": "profileBio", "context": "Prueba", "language": "es"}, role="none", status=[401]),
+            b("POST", "/skills-gap/evaluate", title="Ofertas vacías", body={"cv": {"id": "cv:test", "skills": []}, "jobs": []}, status=[400], checks={"error": "INVALID_EVALUATION_INPUT"}),
+            b("POST", "/skills-gap/evaluate", title="Sin identidad", body=evaluation(), role="none", status=[401]),
+            b("POST", "/skills-gap/recommendations", title="Texto exclusivo de evaluación", body=evaluation(text=True), status=[400], checks={"error": "INVALID_EVALUATION_INPUT"}),
             b("GET", "/courses", title="Paginación inválida", query={"page": "0"}, status=[400]),
             b("GET", "/skills-gap", title="Sin instantánea", role="fresh", status=[409], checks={"error": "SKILLS_INPUT_REQUIRED"}),
             n("GET", "/notifications/templates", title="Usuario sin rol administrativo", role="user", status=[403]),

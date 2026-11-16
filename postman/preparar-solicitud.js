@@ -26,6 +26,11 @@ function omission() {
         (!isLocal && env("testApiBaseUrl") !== base))) {
         return "operación con efectos requiere allowWrites=true y entorno aislado";
     }
+    if (config.path.startsWith("/cvs/ai/") && !flag("allowAi")) return "IA requiere allowAi=true; puede consumir cuota y generar eventos";
+    if (config.path === "/jobs/refresh" && !flag("allowJobRefresh")) return "recarga externa requiere allowJobRefresh=true; revisar cuota y espera de 10 minutos";
+    if (config.fileVar) {
+        if (!flag("allowUploads") || !env(config.fileVar)) return "carga requiere allowUploads=true y archivo sintético local " + config.fileVar;
+    }
     if (isLocal && config.path.endsWith("/hub/negotiate") && !flag("localSignalR")) {
         return "el escenario requiere negociar con Azure SignalR configurado";
     }
@@ -81,6 +86,15 @@ function omission() {
         route = route.replace(marker, encodeURIComponent(value(variable)));
     }
     if (/[{}]/.test(route)) return "la ruta tiene parámetros sin resolver";
+    if (config.fileVar) {
+        try {
+            // FormParam no implementa update() en el SDK que usa Newman 6.
+            pm.request.body.formdata.remove("file");
+            pm.request.body.formdata.add({ key: "file", type: "file", src: env(config.fileVar), contentType: config.fileType });
+        } catch (error) {
+            return "no se pudo configurar el archivo multipart; revisar el runner";
+        }
+    }
     pm.variables.set("__base", base);
     pm.variables.set("__route", route);
 }

@@ -1,5 +1,5 @@
 {
-  "capturado_el": "2026-11-08",
+  "capturado_el": "2026-11-16",
   "organizacion": "SoftwareDesignTEC",
   "nota": "Revisiones de main y SHA Git blob de los artefactos de origen. La guía aplica adaptaciones de enlaces y atribución registradas por el sincronizador.",
   "servicios": {
@@ -14,10 +14,10 @@
     "cvs": {
       "repo": "cvexpert-ms-cvs",
       "openapi": "docs/openapi.yaml",
-      "sha": "013cad93409e82482653d5e7dd7221a8961c4547",
+      "sha": "ba1b4fcd2d7e8c793f4cbe08ce41b25138f7549e",
       "postman": "docs/postman/cvexpert-ms-cvs.postman_collection.json",
       "title": "CVs y plantillas",
-      "revision": "db9ce968b7c937b280f9cb07384939499841f60b",
+      "revision": "144e0d67d9efb04b469e92ba3e2343dedfa9d196",
       "postman_sha": "4bdefe7e2bb7747132fa999f07300f93b1b09e8f"
     },
     "ofertas-postulaciones": {
@@ -32,10 +32,10 @@
     "brecha-cursos": {
       "repo": "cvexpert-ms-brecha-cursos",
       "openapi": "openapi.yaml",
-      "sha": "fcf1748eb169ce6c194ed880f5c1a941a1ae2f52",
+      "sha": "4934c1ba1e82c07356a0a2421ccf8258657f25b8",
       "postman": "postman/brecha-cursos.postman_collection.json",
       "title": "Brecha y cursos",
-      "revision": "f08d8a37f33435456849a76b1afac26df77a1865",
+      "revision": "fab6c726e7f29c4e0d53f0ad02e0957046a04926",
       "postman_sha": "727d64ab619acd67934000dc7f4877972077c717"
     },
     "notificaciones": {
@@ -44,31 +44,31 @@
       "sha": "9d9df718e0f3faa8c780f759c27ff72bc4dc8817",
       "postman": null,
       "title": "Notificaciones",
-      "revision": "501cd20d9c0d70ac6baa9340dac669bf527a1295"
+      "revision": "5ea5ee82d5111f451dbeb983aedcff8c6cdcf430"
     }
   },
   "evento_notificacion": {
     "repo": "cvexpert-ms-notificaciones",
     "path": "docs/contratos/evento-notificacion.schema.json",
     "dest": "contratos/evento-notificacion.schema.json",
-    "revision": "501cd20d9c0d70ac6baa9340dac669bf527a1295",
+    "revision": "5ea5ee82d5111f451dbeb983aedcff8c6cdcf430",
     "sha": "f8afc75fa6c65294f14d229b0d353c87bd0e72fe"
   },
   "guia_notificaciones": {
     "repo": "cvexpert-ms-notificaciones",
     "path": "docs/contratos/README.md",
     "dest": "contratos/notificaciones.origen.md",
-    "revision": "501cd20d9c0d70ac6baa9340dac669bf527a1295",
+    "revision": "5ea5ee82d5111f451dbeb983aedcff8c6cdcf430",
     "sha": "66d97a7cea9b9812f60151161addb9d6fc606cec"
   },
   "clientes": {
     "android": {
       "repo": "cvexpert-mobile",
-      "revision": "4b88785b32958491eb7c94146e1523255d2d367b"
+      "revision": "ab51927dbe676f93ff302254eb24d71737463632"
     },
     "web": {
       "repo": "cvexpert-web",
-      "revision": "b2c34021b3532ff8c14481c02c70b92d2be903f7"
+      "revision": "9f0242645876fc87132313ae0c3ef78ba726d3fe"
     }
   }
 }

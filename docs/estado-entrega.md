@@ -1,67 +1,41 @@
-# Estado de entrega · Fase II
+# Estado de entrega — corte 16 de noviembre de 2026
 
-## Artefactos verificados
+## Artefactos actuales
 
-- Cinco contratos OpenAPI fijados por commit y SHA Git blob. El [manifiesto](../contratos/fuentes.json) registra además las tres colecciones originales, el esquema de eventos, la guía de Notificaciones y los clientes revisados.
-- 45 operaciones REST en la [matriz](matriz-trazabilidad.md). ARM registra 40 en `cv-api`. Las cinco restantes son dos sondas directas y tres operaciones de plantillas de Notificaciones. El registro en el gateway acredita configuración de rutas.
-- La [colección](../postman/README.md) incluye 75 solicitudes. Hay un caso principal por operación y casos adicionales de encadenamiento, aislamiento, validación, ausencia de credenciales, eliminación y conflicto.
-- El [esquema de eventos](../contratos/evento-notificacion.schema.json) se valida como Draft 2020-12. Los cuatro ejemplos de origen cumplen el esquema. Las pruebas del evento de curso comprueban campos requeridos, tipos, URL y opcionales.
+Cinco OpenAPI sincronizados desde main y comprobados por commit/blob; tres colecciones originales conservadas con los mismos blobs, esquema de eventos y guía de Notificaciones igualmente fijados. [Fuentes](../contratos/fuentes.json) · [Auditoría de ocho repositorios](auditoria.md).
 
-## Ejecuciones
+La [matriz](matriz-trazabilidad.md) contiene **51 operaciones** (7 Usuarios, 12 CVs, 14 Ofertas/Postulaciones, 6 Brecha/Cursos, 12 Notificaciones). La [colección Postman](../postman/README.md) contiene **98 solicitudes**, con caso principal por operación y escenarios adicionales. Se conservan los flujos previos y refresh del PR #4. El inventario ARM conservado tiene 41 entradas; el informe de Cabrera del PR #3 añade información sobre siete rutas, sin IDs ARM nuevos. Reconocimiento/401 no demuestra backend ni resultado E2E.
 
-| Comprobación | Resultado observado |
-| --- | --- |
-| Sincronización desde los clones de `main` fijados | Los cinco OpenAPI, las tres colecciones originales y el JSON Schema coinciden con sus blobs de origen. La guía incorpora los enlaces centrales. |
-| Validación documental y JavaScript | Contratos, referencias, operaciones, cuerpos positivos, correspondencia con Postman, eventos, enlaces y patrones de secretos comprobados. Se mantiene la excepción de Usuarios documentada en la [auditoría](auditoria.md). |
-| Newman, entorno de ejemplo | 75 omitidas, 0 solicitudes HTTP, 0 aserciones. |
-| Newman, Brecha en loopback | `GET /health` → `200`. `GET /skills-gap` sin certificado → `403 APIM_CERTIFICATE_REQUIRED`. 2 solicitudes, 7 aserciones, 0 fallos. |
-| Newman, API principal de APIM | `GET /api/v1/cvs` devolvió `401` sin token y con un valor inválido. 2 solicitudes, 2 aserciones, 0 fallos. |
-| Usuarios, `mvn test` | 15 aprobadas, 0 fallos y 0 omitidas. |
-| Newman, ciclo local de CVs | `200 → 201 → 200 → 200 → 200 → 204 → 404`. 7 solicitudes, 30 aserciones y 0 fallos. Se usaron los routers de CVs y los dobles de base de datos y publicador de sus pruebas. |
-| CVs, `python -m pytest -q` | 38 aprobadas, con una advertencia de compatibilidad de TestClient. |
-| Brecha, `npm test` | 53 aprobadas, 0 fallos y 0 omitidas. |
-| Notificaciones, `dotnet test Notificaciones.sln` | 190 aprobadas, 0 fallos y 0 omitidas con .NET 8. Incluye registro de dispositivos, FCM con dobles, plantillas, consumo de eventos y negociación. |
-| Ofertas y postulaciones, Maven | 74 aprobadas en la selección sin Docker. La corrida amplia registró 17 errores en `PersistenceAdaptersTest` y `SwaggerUiTest` por Testcontainers sin motor Docker. |
-| Azure, plano de administración | Inventario de operaciones, destinos, políticas de identidad y metadatos de certificado cliente de los App Services visibles. Consulte [seguridad](seguridad-apim.md). |
+## Estado por capacidad
 
-En una sesión anterior, Android registró `200` en `GET /api/v1/cvs` y `GET /api/v1/jobs`, y `409 SKILLS_INPUT_REQUIRED` en `GET /api/v1/skills-gap`. El antecedente carece de traza que identifique la revisión desplegada.
+| Capacidad | Integrado en main | Evidencia de despliegue / ejecución | Situación actual E2E |
+| --- | --- | --- | --- |
+| Usuarios | Perfil, sesiones, legales, ayuda; 7 operaciones | No hay runs main en la consulta. Certificado/Swagger/Postman/CI-CD: PR #2 abierto | No verificada; requiere entorno y cuentas de ensayo |
+| CVs/plantillas/IA/fotos | Doce operaciones y pruebas con dobles; siembra disponible como script | CD exitoso de 144e0d67… el 14 nov; no acredita catálogo cargado ni respuesta del proveedor | No verificada. Incidente 8 nov conservado como histórico, sin cierre E2E posterior |
+| Ofertas/postulaciones | Refresh, filtros, initialStatus/interested, administración y eventos | CI main exitoso; informe APIM conservado, sin SHA de backend activo | No verificada; interested requiere compatibilidad con receptor |
+| Brecha/recomendaciones | Seis operaciones, niveles explícitos, catálogo e importadores locales | Job de despliegue de fab6c726… exitoso el 11 nov (Costa Rica); sin traza autenticada actual | No verificada. Sincronización ampliada sigue en develop; course.recommended sin productor |
+| Notificaciones | Eventos, persistencia, directorio, dispositivos, SignalR, ACS y plantillas | Deploy y health exitosos de 5ea5ee82… el 12 nov (Costa Rica); README informa pruebas históricas | No verificada en el corte; reportes históricos no equivalen a entrega actual por todos los canales |
+| Android | FCM, ambos POST por oferta, niveles y catálogo contextual | Release firmada subida a Firebase por pipeline ab51927d… (UTC 16 nov; Costa Rica 16 nov) | Login y recepción push no acreditados en esta revisión |
+| Web | CVs/IA/fotos, ofertas, instantáneas y notificaciones | Build/deploy exitoso de 9f024264… el 14 nov | No verificada. Brecha por oferta/catálogo e interfaz nueva: PR #51/#52 abiertos |
 
-## Alcance E2E confirmado por el equipo — 8 de noviembre de 2026
+Los enlaces a jobs y timestamps UTC originales están en [revisiones-auditoria.json](../contratos/revisiones-auditoria.json). No se consultó la configuración actual de Azure ni se enviaron solicitudes a servicios productivos.
 
-El equipo informó que **Android 0.7.2** está disponible en Firebase App Distribution.
-Esta publicación **no certifica** el inicio de sesión en esa APK: las respuestas
-`200` registradas previamente para `/api/v1/cvs` y `/api/v1/jobs` corresponden a
-una ejecución de Android en modo *debug*. Si la autenticación falla en 0.7.2,
-registrar el texto exacto del error, el dispositivo, la versión instalada y
-la fecha/hora, sin compartir ID tokens ni datos personales.
+## Validación de esta actualización
 
-**Plan de pruebas de Fase II:**
+Resultados reproducibles en [evidencia documental del 16 nov](../evidencias/validacion-2026-11-16.md). Las validaciones de archivos, esquemas, procedencia, sintaxis y bloqueo Newman acreditan los artefactos documentales; no aprueban flujos E2E. La normalización en memoria del ejemplo YAML de Usuarios sigue acotada al blob original y su corrección corresponde al servicio.
 
-- **E2E disponibles para ejecución:** Ofertas, Postulaciones, Brecha y Notificaciones.
-  «Disponibles» no significa «pasaron»: registrar cada ejecución, código HTTP,
-  condiciones y resultado. Las operaciones administrativas de plantillas de
-  Notificaciones requieren comprobar primero su publicación en APIM.
-- **E2E temporalmente bloqueados:** CVs, generación de PDF y operaciones de IA.
-  Según el estado comunicado por el equipo, Pérez debe cargar las plantillas y
-  resolver la respuesta `500` de IA. Las pruebas locales de CVs que figuran más
-  arriba siguen siendo evidencia **local**, no validación de estas E2E.
-- **Trabajo futuro, fuera del cierre de Fase II:** ciclo FCM del **cliente Android**
-  (registro, renovación y eliminación del token, recepción en primer y segundo
-  plano, navegación al aviso). Se conservan el contrato de dispositivos, el
-  código de FCM del backend y sus pruebas. Las pruebas del backend no demuestran
-  entrega real a un dispositivo.
+## Resultados anteriores conservados
 
-El objetivo inmediato es completar las E2E disponibles con cuentas y datos
-sintéticos, sin alterar información productiva.
+El [registro histórico](../evidencias/historico-corte-anterior.md) conserva las cifras y el alcance originales de Newman local/APIM y suites de servicios reportadas en el corte anterior. No se reasignan a los SHAs del 16 de noviembre. Las observaciones Android debug de 200 en CVs/Jobs y 409 SKILLS_INPUT_REQUIRED carecen de traza de revisión backend; no certifican APK de distribución.
 
-## Pendientes concretos
+La comunicación del 8 nov sobre plantillas pendientes, HTTP 500 de IA y Android 0.7.2 es histórica. El código y los pipelines posteriores cambian la clasificación de implementación, pero no aportan una ejecución E2E que cierre esos incidentes. La antigua clasificación de todo FCM Android como trabajo futuro se reemplaza por **implementado en main; recepción real no verificada**.
 
-| Responsable | Acción requerida |
-| --- | --- |
-| APIM | Rol administrativo aplicado en las escrituras de ofertas y en las plantillas de Notificaciones (13 nov 2026); falta comprobarlo con un token de administrador y otro sin ese rol. Las 48 operaciones de la API principal responden `401` sin token. Entregar trazas depuradas de enrutamiento, encabezados y autorización. |
-| App Service y responsables de backend | Verificar mTLS, huella activa, bloqueo de acceso directo y revisión desplegada. Facilitar la configuración efectiva de Ofertas. |
-| Entorno de ensayo | Proporcionar una base aislada, cuentas propietaria/ajena/admin/sin instantánea y datos sintéticos. Ejecutar los escenarios autenticados y las escrituras según el [plan](plan-pruebas.md). |
-| Usuarios | Corregir las comillas del ejemplo de dirección en el contrato original y documentar las cabeceras de sesión. |
-| Brecha y Notificaciones | Acordar la transformación de cursos y el disparador, implementar el productor y verificar Service Bus, deduplicación y entrega. |
-| Ofertas y entorno local | Iniciar Docker y ejecutar la suite Maven completa para cubrir persistencia y Swagger con Testcontainers. |
-| Android y Notificaciones | El ciclo FCM del cliente Android queda como **trabajo futuro fuera del cierre de Fase II**. Se conserva la cobertura documental y las pruebas del backend. |
+## Pendientes de acreditación
+
+- Entorno aislado autorizado, identidades propietaria/ajena/admin/sin instantánea, revisión activa y datos sintéticos antes de pruebas autenticadas o escrituras.
+- Cabrera: inventario ARM actual con IDs reales, política de rol para ofertas/plantillas, trazas autenticadas, mTLS/huellas y configuración efectiva de Ofertas; aclarar Usuarios desplegado frente a PR #2.
+- Responsables de servicios: hallazgos H-01–H-09 de la auditoría; confirmar plantillas/IA y catálogo con datos elegibles, sin activar cargas por esta tarea.
+- Brecha/Notificaciones: productor course.recommended, transformación del payload e idempotencia. La sincronización de cursos develop/PR #33 requiere su propia integración.
+- Android/Notificaciones: registro, renovación, baja, primer/segundo plano y navegación mediante prueba en dispositivo. Web: esperar integración de PR #51/#52 para presentar esos cambios como main.
+- Samuel: incorporar [observaciones](pendientes-samuel.md) al resolver PR #5.
+- Justin: ejecutar y registrar la [matriz E2E](plan-pruebas.md), ensayar el [guion](../video/guion.md) y completar [checklist](../video/checklist.md). El video no está grabado, aprobado ni entregado por esta tarea.
