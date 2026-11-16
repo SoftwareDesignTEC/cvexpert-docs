@@ -146,7 +146,7 @@
       "ruta_interna": "/jobs",
       "operacion_apim": "post-jobs",
       "destino": "ofertas",
-      "rol_apim": "delete"
+      "rol_apim": "override"
     },
     {
       "servicio": "ofertas-postulaciones",
@@ -162,13 +162,21 @@
       "ruta_interna": "/jobs/{id}",
       "operacion_apim": "put-jobs",
       "destino": "ofertas",
-      "rol_apim": "delete"
+      "rol_apim": "override"
     },
     {
       "servicio": "ofertas-postulaciones",
       "metodo": "DELETE",
       "ruta_interna": "/jobs/{id}",
       "operacion_apim": "delete-jobs",
+      "destino": "ofertas",
+      "rol_apim": "override"
+    },
+    {
+      "servicio": "ofertas-postulaciones",
+      "metodo": "POST",
+      "ruta_interna": "/jobs/refresh",
+      "operacion_apim": "post-jobs-refresh",
       "destino": "ofertas",
       "rol_apim": "delete"
     },

@@ -23,10 +23,10 @@
     "ofertas-postulaciones": {
       "repo": "cvexpert-ms-ofertas-postulaciones",
       "openapi": "docs/openapi.yaml",
-      "sha": "5fe3cd7dabf78f1b909e1d3d6cd3404833c25837",
+      "sha": "d5069a45b144863b53924392ec068f867703e7d8",
       "postman": "postman/ofertas-postulaciones.postman_collection.json",
       "title": "Ofertas y postulaciones",
-      "revision": "822c9ebe84e3a75671a702a30cd3978c92d0337b",
+      "revision": "2e9ea432b4b10f5fbe53941da2f824d084a908c7",
       "postman_sha": "e0efe1fec71bda4e6f45fac71d357815e1e0f343"
     },
     "brecha-cursos": {
