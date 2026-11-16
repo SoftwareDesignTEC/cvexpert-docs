@@ -3,7 +3,7 @@
 La seguridad de CVExpert se apoya en dos fronteras. Entre el cliente y APIM, el usuario se identifica con el token de Google. Entre APIM y cada backend, el gateway se identifica con un certificado de cliente. Los backends nunca ven el token: confían en los encabezados de identidad solo porque la llamada trae el certificado de APIM.
 
 ```mermaid
-flowchart LR
+flowchart TB
     CL["Cliente web o Android"] -- "1. Bearer id_token de Google" --> A["APIM<br/>validate-jwt"]
     A -- "2. TLS con certificado de cliente<br/>3. X-User-Id, X-User-Email, X-User-Role" --> AS["App Service<br/>Client certificate mode = Required"]
     AS -- "X-ARR-ClientCert" --> APP["Aplicación<br/>compara la huella y la vigencia"]
