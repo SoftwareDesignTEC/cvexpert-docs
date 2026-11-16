@@ -4,7 +4,7 @@ El [CSV](../contratos/matriz-trazabilidad.csv) vincula cada operación con la re
 
 Las rutas públicas corresponden al [inventario de APIM](../contratos/apim-rutas.json). Una ruta registrada identifica la configuración del gateway. El [estado de entrega](estado-entrega.md) identifica las llamadas ejecutadas. Los cambios de contrato y de implementación se detallan en la [auditoría](auditoria.md).
 
-Corte 2026-11-16. El inventario ARM conservado tiene fecha 2026-11-08 e incorpora refresh mediante el PR #4. Las rutas indicadas como «informadas» proceden del informe de Cabrera fusionado en PR #3, sin identificadores ARM nuevos. Un rechazo 401 no verifica el backend. No se ejecutaron E2E de estas revisiones en esta actualización; los resultados anteriores son históricos. El CSV conserva por separado ambas procedencias, el blob y la evidencia por operación.
+Corte 2026-11-16, reconciliado con el merge de PR #5. El inventario ARM conservado tiene fecha 2026-11-08 e incorpora refresh mediante PR #4. Siete rutas «informadas» proceden de seguridad-apim.md (registro y rechazo 401); fotografías está documentada en apim.md sin ID ARM ni traza autenticada. No se inventaron identificadores. Un rechazo 401 no verifica el backend. No se ejecutaron E2E de estas revisiones; los resultados anteriores son históricos. El CSV separa las procedencias, el blob y la evidencia por operación.
 
 ## Usuarios (7)
 
@@ -31,7 +31,7 @@ Corte 2026-11-16. El inventario ARM conservado tiene fecha 2026-11-08 e incorpor
 | `GET /cvs/{id}` | /api/v1/cvs/{id} | Identidad propia y propiedad del recurso cuando aplica | — | 200 Cv | Ciclo de CV |
 | `PUT /cvs/{id}` | /api/v1/cvs/{id} | Identidad propia y propiedad del recurso cuando aplica | CvInput | 200 Cv | Ciclo de CV |
 | `DELETE /cvs/{id}` | /api/v1/cvs/{id} | Identidad propia y propiedad del recurso cuando aplica | — | 204 — | Ciclo de CV |
-| `POST /cvs/photos` | — | Identidad propia y propiedad del recurso cuando aplica | multipart/form-data: file (binary) | 201 PhotoUploadResponse | Fotografías de CV |
+| `POST /cvs/photos` | /api/v1/cvs/photos (informada; sin ID ARM) | Identidad propia y propiedad del recurso cuando aplica | multipart/form-data: file (binary) | 201 PhotoUploadResponse | Fotografías de CV |
 | `GET /templates` | /api/v1/templates | Consulta general | — | 200 PaginatedTemplates | Lecturas |
 | `GET /templates/{id}` | /api/v1/templates/{id} | Consulta general | — | 200 Template | Lecturas |
 | `POST /cvs/ai/expand-experience` | /api/v1/cvs/ai/expand-experience | Identidad propia y propiedad del recurso cuando aplica | ExpandExperienceRequest | 200 ExpandExperienceResponse | Experiencia laboral |

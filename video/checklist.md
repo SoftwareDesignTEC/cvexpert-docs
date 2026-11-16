@@ -13,7 +13,7 @@ Estado: pendiente de ensayo y grabación. No marcar una casilla sin comprobarla.
 - [ ] Comprobar productor → cola → persistencia → tiempo real web → Android push y correo con correlación; identificar los canales aún no acreditados.
 - [ ] Mostrar course.recommended como pendiente mientras falte productor; no sustituirlo por un mensaje manual sin aclaración.
 - [ ] Confirmar tres tipos de almacenamiento y frontera de seguridad con evidencia vigente y sin exponer configuración privada.
-- [ ] Coordinar con Samuel la referencia de arquitectura, sin presentar PR #5 abierto como aprobado.
+- [ ] Usar la referencia de arquitectura de Samuel ya fusionada mediante PR #5 e identificar su revisión.
 - [ ] Si un flujo exigido no está disponible, registrarlo y resolverlo antes de entregar; no recortar requisitos para aparentar cumplimiento.
 
 ## Audiovisual y orden

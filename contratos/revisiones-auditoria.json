@@ -1031,5 +1031,65 @@
       "head": "54a2c23a4ed78c5458985e0a08b40a1bb8912818",
       "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/1"
     }
-  ]
+  ],
+  "alcance_corte_original": "repositorios, base_docs y prs_docs_verificados conservan la consulta original anterior al merge de PR #5; no representan el estado actual de los PR. Ver reconciliacion.",
+  "reconciliacion": {
+    "fecha": "2026-11-16",
+    "main_integrado": "7457ce9b0b2abb22f46654147d745e1eac7347cf",
+    "rama_pr6_antes_del_merge": "00b8d5b84d4dfc3627bb66107b354c99a91a3e60",
+    "conflictos_reales": [
+      "docs/auditoria.md",
+      "docs/estado-entrega.md",
+      "docs/plan-pruebas.md",
+      "postman/README.md"
+    ],
+    "prs_docs_verificados": [
+      {
+        "numero": 1,
+        "estado": "open",
+        "borrador": true,
+        "fusionado_el": null,
+        "merge_commit": null,
+        "head": "54a2c23a4ed78c5458985e0a08b40a1bb8912818",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/1"
+      },
+      {
+        "numero": 3,
+        "estado": "closed",
+        "borrador": false,
+        "fusionado_el": "2026-11-16T14:50:25Z",
+        "merge_commit": "e1a9efa04f50aef6177a8cbc6d69163828238c05",
+        "head": "24b7386e7e45ffa642b078ecda8d82ea69de4ffa",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/3"
+      },
+      {
+        "numero": 4,
+        "estado": "closed",
+        "borrador": false,
+        "fusionado_el": "2026-11-16T14:50:50Z",
+        "merge_commit": "61039b25ec18681ed8ff5ddfca326806e62c5c88",
+        "head": "fc190fa13a5afe52ef120342d24afddff8abea03",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/4"
+      },
+      {
+        "numero": 5,
+        "estado": "closed",
+        "borrador": false,
+        "fusionado_el": "2026-11-16T15:49:20Z",
+        "merge_commit": "7457ce9b0b2abb22f46654147d745e1eac7347cf",
+        "head": "2e6797158a7dc5b909bb280e565a3b81de3d55d9",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/5"
+      },
+      {
+        "numero": 6,
+        "estado": "open",
+        "borrador": false,
+        "fusionado_el": null,
+        "merge_commit": null,
+        "head": "00b8d5b84d4dfc3627bb66107b354c99a91a3e60",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/6"
+      }
+    ],
+    "nota": "Consulta de GitHub y reconciliación documental; sin reauditar main de los otros siete repositorios ni ejecutar E2E. PR #43 Android integra FCM en 0.9.5 y declara push real pendiente."
+  }
 }

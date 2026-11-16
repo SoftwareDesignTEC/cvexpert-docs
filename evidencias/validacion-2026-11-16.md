@@ -1,5 +1,7 @@
 # Validación documental — 16 de noviembre de 2026
 
+Este registro corresponde a la preparación original del PR #6 antes del merge de arquitectura. Sus referencias al alcance reservado de Samuel son históricas. La [reconciliación posterior](reconciliacion-pr6.md) registra integración, validaciones nuevas y correcciones; no altera los resultados originales.
+
 Entorno local Windows, Python **3.14.3** en `.docs-venv`, Node **24.21.0**, Newman **6.2.3**. La CI documental existente usa Python 3.12/Node 22; el resultado local no se atribuye a esos runtimes. La rama parte de main `61039b25ec18681ed8ff5ddfca326806e62c5c88`.
 
 ## Comandos y resultados

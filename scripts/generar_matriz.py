@@ -24,8 +24,9 @@ OBSERVED = {
     ("brecha-cursos", "GET", "/skills-gap"): "409 SKILLS_INPUT_REQUIRED observado desde Android; backend/revisión sin traza",
 }
 
-# Informe fusionado de Cabrera (PR #3), sin IDs ARM exportados para estas rutas.
+# Informes de Cabrera: seguridad-apim.md y apim.md, sin IDs ARM nuevos.
 REPORTED_APIM = {
+    ("cvs", "POST", "/cvs/photos"),
     ("cvs", "POST", "/cvs/ai/generate-text"),
     ("cvs", "POST", "/cvs/ai/generate-cv"),
     ("brecha-cursos", "POST", "/skills-gap/evaluate"),
@@ -92,11 +93,12 @@ def inventory():
         public_route = mapping["ruta_publica"] if mapping else ""
         observation = f"Inventario histórico ARM cv-api/{mapping['operacion_apim']}; destino {mapping['destino']}" if mapping else "Sin ID ARM en el inventario conservado"
         reported = key in REPORTED_APIM
+        photo_report = key == ("cvs", "POST", "/cvs/photos")
         if reported:
-            observation += "; PR #3 informa registro y rechazo 401 sin token; sin traza autenticada ni revisión backend"
+            observation += "; docs/apim.md documenta la ruta multipart; sin ID ARM ni traza autenticada" if photo_report else "; PR #3 informa registro y rechazo 401 sin token; sin traza autenticada ni revisión backend"
         if key in OBSERVED:
             observation += "; antecedente del corte 2026-11-08: " + OBSERVED[key]
-        deployment = "Inventario APIM histórico; backend activo no verificado" if mapping else "Registro APIM informado en PR #3; backend activo no verificado" if reported else "Publicación APIM no acreditada"
+        deployment = "Inventario APIM histórico; backend activo no verificado" if mapping else "Ruta APIM documentada en apim.md; backend activo no verificado" if photo_report else "Registro APIM informado en PR #3; backend activo no verificado" if reported else "Publicación APIM no acreditada"
         if mapping and mapping["rol_apim"] == "delete" and "X-User-Role" in auth:
             observation += "; la política elimina X-User-Role requerido por el backend"
         proof = "No ejecutado en esta actualización; escenario definido"
@@ -127,7 +129,7 @@ def inventory():
             "ruta_interna": route,
             "ruta_apim_confirmada": public_route,
             "ruta_apim_reportada": "/api/v1" + route if reported else "",
-            "fuente_apim": "contratos/apim-rutas.json (corte 2026-11-08; incluye refresh del PR #4)" if mapping else "docs/seguridad-apim.md (PR #3, fusionado 2026-11-16)" if reported else "Sin evidencia de publicación",
+            "fuente_apim": "contratos/apim-rutas.json (corte 2026-11-08; incluye refresh del PR #4)" if mapping else "docs/apim.md (ruta multipart documentada, sin ID ARM exportado)" if photo_report else "docs/seguridad-apim.md (PR #3, fusionado 2026-11-16)" if reported else "Sin evidencia de publicación",
             "canal": "APIM inventariado" if mapping else "APIM informado; confirmar mapeo en ensayo" if reported else "Backend definido; APIM por confirmar",
             "autenticacion_backend": auth,
             "autenticacion_apim": "Google ID Token; comprobar autorización real en ensayo" if mapping or reported else "Publicación no verificada",
@@ -165,7 +167,7 @@ def markdown(rows):
         "",
         "Las rutas públicas corresponden al [inventario de APIM](../contratos/apim-rutas.json). Una ruta registrada identifica la configuración del gateway. El [estado de entrega](estado-entrega.md) identifica las llamadas ejecutadas. Los cambios de contrato y de implementación se detallan en la [auditoría](auditoria.md).",
         "",
-        "Corte 2026-11-16. El inventario ARM conservado tiene fecha 2026-11-08 e incorpora refresh mediante el PR #4. Las rutas indicadas como «informadas» proceden del informe de Cabrera fusionado en PR #3, sin identificadores ARM nuevos. Un rechazo 401 no verifica el backend. No se ejecutaron E2E de estas revisiones en esta actualización; los resultados anteriores son históricos. El CSV conserva por separado ambas procedencias, el blob y la evidencia por operación.",
+        "Corte 2026-11-16, reconciliado con el merge de PR #5. El inventario ARM conservado tiene fecha 2026-11-08 e incorpora refresh mediante PR #4. Siete rutas «informadas» proceden de seguridad-apim.md (registro y rechazo 401); fotografías está documentada en apim.md sin ID ARM ni traza autenticada. No se inventaron identificadores. Un rechazo 401 no verifica el backend. No se ejecutaron E2E de estas revisiones; los resultados anteriores son históricos. El CSV separa las procedencias, el blob y la evidencia por operación.",
         "",
     ]
     for service, info in manifest["servicios"].items():

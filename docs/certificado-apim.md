@@ -20,7 +20,7 @@ piden por el canal privado del equipo; no van en este repo.
    - si no coincide, responder 403.
 
    Si la variable está vacía no se exige nada, así se puede correr en local. Ejemplo en Java:
-   [`ApimCertificateFilter`](https://github.com/SoftwareDesignTEC/cvexpert-ms-usuarios/blob/main/src/main/java/cr/ac/tec/cvexpert/usuarios/config/ApimCertificateFilter.java).
+   [`ApimCertificateFilter`](https://github.com/SoftwareDesignTEC/cvexpert-ms-usuarios/blob/7cb84d9ae5416569adb93d161a4a7b3cd84c1269/src/main/java/cr/ac/tec/cvexpert/usuarios/config/ApimCertificateFilter.java) de la rama del PR #2, pendiente de integrar en el main del corte auditado.
 4. **Probar:** la URL directa del App Service tiene que responder 403, y la ruta de health
    200.
 
