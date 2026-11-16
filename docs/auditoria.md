@@ -76,7 +76,7 @@ CVs tiene cambios y CD posteriores al incidente comunicado el 8 de noviembre (pl
 | H-07 | Cabrera / backend | 41 entradas en inventario ARM conservado, con fecha 8 nov y refresh añadido en PR #4; PR #3 informa otras 7 rutas y 401 sin token (48 en total), sin IDs ARM exportados. Fotografías no acreditada en esas fuentes. Obtener inventario actual, trazas autenticadas, roles y revisión backend; no se inventaron IDs. |
 | H-08 | Cabrera / Usuarios | Informe Azure de PR #3 describe validación de huella de Usuarios, pero el filtro está en PR #2 abierto. Identificar artefacto activo y resolver integración/OIDC sin confundir despliegue con main. |
 | H-09 | CVs / clientes | Convención contractual de fechas de día/mes a las 12:00 UTC contrasta con helpers IA que convierten/inventan fecha a las 00:00 UTC. Verificar mes visible en Costa Rica y corregir origen tras acordarlo. |
-| H-10 | Samuel / clientes | READMEs de Web, CVs y Notificaciones contienen referencias antiguas. El README de Notificaciones aún llama futuro a FCM Android; no es evidencia vigente. Actualizar en sus repositorios por sus responsables. |
+| H-10 | Samuel / clientes | READMEs de Web, CVs y Notificaciones contienen referencias antiguas. El README de Notificaciones y docs/notificaciones.md central aún llaman futuro a FCM Android; no son evidencia vigente. La corrección del documento central queda para Samuel porque también está en PR #5. Actualizar en sus repositorios por sus responsables. |
 
 No se corrigieron estas diferencias alterando las copias OpenAPI, validadores o código ajeno. Las formas de error y límites de paginación siguen siendo propios de cada dominio.
 

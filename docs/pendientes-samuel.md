@@ -4,6 +4,7 @@ Corte 2026-11-16. Este archivo registra observaciones para Samuel sin modificar 
 
 | Documento reservado | Corrección que conviene considerar al resolver PR #5 |
 | --- | --- |
+| docs/notificaciones.md (también modificado por PR #5) | Corregir la afirmación antigua de FCM Android futuro y la ausencia de clases/registro: main ya contiene PushTokenSync, CvMessagingService y PushNotifications. Actualizar revisión Android y el disparador cv.generated tras cualquiera de las operaciones IA; la recepción real sigue sin acreditar. Este archivo se conserva intacto en esta tarea. |
 | Arquitectura y flujos | Android main ya integra evaluate/recommendations, catálogo contextual y FCM. Web por oferta continúa en PR #51/#52. Brecha usa proyecciones CV/oferta del cliente: no consulta directamente otros servicios ni verifica titularidad de esos datos para decisiones de autorización. |
 | Flujos | course.recommended tiene consumidor/contrato, sin productor main. Diferenciar evento simulado autorizado y emisión real. cv.generated depende del uso IA registrado y guardado posterior; job.new requiere alertas/umbral; cambio de estado administrativo y movimiento propio no son equivalentes. |
 | Almacenamiento | Documentar SQL (Ofertas/Brecha), documentos Mongo/Cosmos (Usuarios/CVs/Notificaciones) y objetos Blob (fotos). La existencia de adaptadores/migraciones no acredita datos ni despliegue actual. Service Bus es mensajería, SignalR tiempo real y ACS correo. |
