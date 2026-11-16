@@ -26,7 +26,7 @@ Todos están en la organización `SoftwareDesignTEC` de GitHub. El dueño sale d
 
 | Repositorio | Qué es | Dueño | Stack | Despliegue |
 | --- | --- | --- | --- | --- |
-| [cv-master](https://github.com/SoftwareDesignTEC/cv-master) | Cliente web | Gabriel Pérez | React 19, Vite, TypeScript, Tailwind | Azure Static Web Apps: https://victorious-mushroom-0cd000a10.5.azurestaticapps.net |
+| [cvexpert-web](https://github.com/SoftwareDesignTEC/cvexpert-web) | Cliente web (antes `cv-master`) | Gabriel Pérez | React 19, Vite, TypeScript, Tailwind | Azure Static Web Apps: https://victorious-mushroom-0cd000a10.5.azurestaticapps.net |
 | [cvexpert-mobile](https://github.com/SoftwareDesignTEC/cvexpert-mobile) | Cliente Android | Andrés Zumbado | Kotlin, Jetpack Compose, Hilt, Retrofit | APK en Firebase App Distribution, grupo `testers` (sin URL pública) |
 | [cvexpert-ms-usuarios](https://github.com/SoftwareDesignTEC/cvexpert-ms-usuarios) | Perfil, rol, sesiones, textos legales y ayuda | Gabriel Cabrera | Java 17, Spring Boot 3.3, MongoDB | App Service `cvexpert-usuarios`, solo por APIM |
 | [cvexpert-ms-cvs](https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs) | CVs, plantillas e IA de redacción | Gabriel Pérez | Python 3.12, FastAPI, MongoDB | App Service `cvexpert-ms-cvs`, solo por APIM |
@@ -34,7 +34,8 @@ Todos están en la organización `SoftwareDesignTEC` de GitHub. El dueño sale d
 | [cvexpert-ms-brecha-cursos](https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos) | Brecha de habilidades y catálogo de cursos | Justin Mayorga | Node.js 24, Express 5, TypeScript, PostgreSQL | App Service `cvexpert-ms-brecha-cursos`. El CD está apagado: **por confirmar** si hay una versión desplegada |
 | [cvexpert-ms-notificaciones](https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones) | Consumo de eventos, historial y entrega por SignalR, push y correo | Samuel Fajardo | .NET 8, ASP.NET Core, MongoDB | App Service `cvexpert-notificaciones`, solo por APIM |
 | [cvexpert-docs](https://github.com/SoftwareDesignTEC/cvexpert-docs) | Contratos, Postman y esta documentación | Justin Mayorga | Markdown, OpenAPI, Python y Node para validar | No se despliega |
-| `cvexpert-apim` | — | — | — | **No existe** en la organización. Las políticas viven en el recurso APIM `gabriel-api-management` (API `cv-api`) y no están versionadas en ningún repositorio. Quién lo administra: **por confirmar** |
+
+APIM no tiene repositorio propio. Sus políticas viven en el recurso `gabriel-api-management` (API `cv-api`) y no están versionadas. Quién lo administra: **por confirmar**.
 
 La URL pública de los cinco backends es la del gateway, `https://gabriel-api-management.azure-api.net/api/v1`. Cada App Service rechaza las llamadas que no traen el certificado de cliente de APIM (ver [seguridad](seguridad.md)).
 
@@ -42,7 +43,7 @@ La URL pública de los cinco backends es la del gateway, `https://gabriel-api-ma
 
 Los comandos salen del README de cada repositorio. Ninguno necesita secretos reales para las pruebas. Para llamar a un backend sin APIM hay que mandar a mano los encabezados que APIM agregaría (`X-User-Id`, `X-User-Email` y, en rutas de administración, `X-User-Role: admin`). La validación del certificado se apaga en local cuando no se configura la huella.
 
-### cv-master (web)
+### cvexpert-web
 
 Requiere Node.js 20 o superior. Crear `apps/web/.env.local` con `VITE_APIM_BASE_URL` y `VITE_GOOGLE_CLIENT_ID` (se piden al encargado de DevOps).
 

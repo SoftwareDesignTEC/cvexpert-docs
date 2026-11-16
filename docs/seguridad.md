@@ -17,7 +17,7 @@ El detalle de la configuración consultada en Azure y el inventario de rutas est
 - Los clientes obtienen un `id_token` de Google y lo envían en `Authorization: Bearer <id_token>` en cada llamada a `https://gabriel-api-management.azure-api.net/api/v1`.
 - La política `validate-jwt` de la API `cv-api` usa el descubrimiento OIDC de Google y comprueba la firma, la expiración, la audiencia (el Client ID de OAuth) y los emisores `accounts.google.com` y `https://accounts.google.com`. Si falla, devuelve 401 y el cliente cierra la sesión.
 - El token dura una hora y no se renueva solo. En el dispositivo solo se guardan el token y las preferencias de tema e idioma; el resto vive en memoria.
-- Las políticas no están versionadas en ningún repositorio (`cvexpert-apim` no existe). Lo anterior viene del inventario ARM de [seguridad-apim.md](seguridad-apim.md) y de los README de los clientes. El XML vigente de las políticas: **por confirmar**.
+- Las políticas no están versionadas: APIM no tiene repositorio propio. Lo anterior viene del inventario ARM de [seguridad-apim.md](seguridad-apim.md) y de los README de los clientes. El XML vigente de las políticas: **por confirmar**.
 
 ## 2. Encabezados de identidad
 
@@ -86,7 +86,7 @@ Ningún repositorio guarda credenciales. Los pipelines se autentican en Azure co
 
 | Repositorio | Autenticación | Secretos y variables de GitHub |
 | --- | --- | --- |
-| cv-master | Token de despliegue de Static Web Apps | `secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_…`. `vars.APIM_BASE_URL` y `vars.GOOGLE_WEB_CLIENT_ID` se inyectan en la compilación |
+| cvexpert-web | Token de despliegue de Static Web Apps | `secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_…`. `vars.APIM_BASE_URL` y `vars.GOOGLE_WEB_CLIENT_ID` se inyectan en la compilación |
 | cvexpert-mobile | Cuenta de servicio de Firebase | Secrets `RELEASE_KEYSTORE_BASE64`, `RELEASE_KEYSTORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD` y `FIREBASE_SERVICE_CREDENTIALS`. Variables `APIM_BASE_URL`, `GOOGLE_WEB_CLIENT_ID`, `FIREBASE_APP_ID` y `NOTIFICATIONS_ENABLED` |
 | cvexpert-ms-usuarios | OIDC (`gh-actions-cvexpert-ms-usuarios`, `refs/heads/main`) | `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` y `AZURE_SUBSCRIPTION_ID` (son identificadores, no contraseñas) |
 | cvexpert-ms-cvs | OIDC (`gh-actions-cvexpert-ms-cvs`, environment `production`), rol *Website Contributor* solo sobre su App Service | Los mismos tres identificadores |
@@ -101,7 +101,7 @@ Todo cambio entra por pull request revisado por otro integrante. No se hace push
 
 - Lo declaran los README de Usuarios, CVs, Ofertas, Notificaciones y Android. En Ofertas, el check `pruebas` es obligatorio para unir un PR.
 - Brecha indica que el check `CI` debe configurarse como obligatorio en `develop` y `main`, pero el workflow no crea esa regla.
-- **Por confirmar** en GitHub (Settings → Branches): la regla efectiva de cada repositorio, en especial `cv-master`, `cvexpert-docs` y `cvexpert-ms-brecha-cursos`, cuyos README no lo dicen.
+- **Por confirmar** en GitHub (Settings → Branches): la regla efectiva de cada repositorio, en especial `cvexpert-web`, `cvexpert-docs` y `cvexpert-ms-brecha-cursos`, cuyos README no lo dicen.
 
 ## Riesgos conocidos
 

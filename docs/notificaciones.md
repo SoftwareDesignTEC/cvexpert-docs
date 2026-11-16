@@ -6,21 +6,17 @@ La [guía del servicio](../contratos/notificaciones.origen.md) conserva los ejem
 
 El consumidor valida el evento y usa `eventId` para deduplicar. La notificación persistida es consultable por REST y tiene un identificador propio. SignalR, push y correo son entregas del mismo aviso, sujetas a configuración. Correo usa Azure Communication Services y el correo/idioma del directorio. SignalR con Azure configurado devuelve una URL y un token efímero en `POST /notifications/hub/negotiate`. Después de negociar vía APIM, el cliente se conecta directamente a Azure SignalR. En desarrollo, el fallback local utiliza la negociación estándar de SignalR y su respuesta difiere del contrato para Azure.
 
-**Alcance de Fase II:** el backend FCM y su contrato REST se mantienen.
-La integración del **ciclo de FCM en Android** (token, recepción de push y
-navegación al aviso) queda como **trabajo futuro** y **no bloquea** el cierre
-de la documentación de esta fase. La funcionalidad de push extremo a extremo
-no se declara probada hasta contar con evidencia de dispositivos y configuración.
+**Push en Android:** el ciclo completo de FCM está integrado desde la versión 0.9.5 de la app ([PR #43 de cvexpert-mobile](https://github.com/SoftwareDesignTEC/cvexpert-mobile/pull/43), 2026-11-15): registro y baja del token, recepción del push y aviso con la app abierta.
 
 ## Push Android
 
 - El backend registra el token con `POST /notifications/devices` y plataforma `android`. Responde `201` para un token nuevo y `200` para un registro previo. Si cambia la cuenta que registró el mismo token, el registro pasa a la última cuenta.
 - `DELETE /notifications/devices/{token}` elimina el registro propio. La ruta recibe el token codificado para URL y devuelve `204` también si el registro no existe o pertenece a otra cuenta.
 - Se envía a todos los tokens registrados para el destinatario. El objeto `notification` contiene `title` y `body` renderizados. `data` contiene `notificationId` y `type` como cadenas. El identificador corresponde al aviso persistido, que puede consultarse en `GET /notifications` y marcarse mediante `PATCH /notifications/{id}/read`.
-- En segundo plano, Android puede mostrar el aviso del payload `notification`. En primer plano, el cliente debe manejarlo en `FirebaseMessagingService.onMessageReceived`. El diseño contempla registrar al iniciar sesión y al renovar el token, eliminar al cerrar sesión y volver a registrar tras reinstalar.
+- En segundo plano, Android muestra el aviso del payload `notification`. En primer plano lo recibe `CvMessagingService.onMessageReceived`, que lo muestra igual y actualiza la campana. `PushTokenSync` registra el token al iniciar sesión y cuando FCM entrega uno nuevo, y lo elimina al cerrar sesión.
 - El canal elimina los tokens que Firebase marca como `Unregistered`. Los demás fallos se registran sin borrar el token. El backend habilita el canal con `Firebase:ServiceAccountJson`, provisionado como secreto `Firebase--ServiceAccountJson` cuando se usa Key Vault. El cliente debe corresponder al mismo proyecto Firebase.
 
-El backend contiene `DevicesController`, `FcmNotificationChannel`, `FirebaseFcmSender` y pruebas de canal y registro. Android sincroniza el directorio y consume el historial, contador y acciones de lectura por REST. En la revisión Android fijada no aparecen la dependencia de Firebase Messaging, un `FirebaseMessagingService` ni llamadas de alta y baja de dispositivos. El ciclo del token y la recepción FCM en Android se incorporarán como **trabajo futuro posterior a Fase II**; no se consideran bloqueantes de esta entrega. La integración extremo a extremo en un dispositivo no está acreditada. [Backend](https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/tree/501cd20d9c0d70ac6baa9340dac669bf527a1295/src/Notificaciones.Api) · [Android](https://github.com/SoftwareDesignTEC/cvexpert-mobile/tree/4b88785b32958491eb7c94146e1523255d2d367b/app)
+El backend contiene `DevicesController`, `FcmNotificationChannel`, `FirebaseFcmSender` y pruebas de canal y registro. Android sincroniza el directorio, consume el historial, el contador y las acciones de lectura por REST, y recibe el push con `CvMessagingService` y `PushTokenSync`. El push solo se activa si el APK se compila con `NOTIFICATIONS_ENABLED=true` y `google-services.json` del mismo proyecto Firebase que usa el backend. [Backend](https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/tree/501cd20d9c0d70ac6baa9340dac669bf527a1295/src/Notificaciones.Api) · [Android](https://github.com/SoftwareDesignTEC/cvexpert-mobile/tree/7932a1236e06cb7a5a5f024db66a08ffa86340f6/app/src/main/java/com/cvpro/app/data/notifications)
 
 ## Plantillas editables
 

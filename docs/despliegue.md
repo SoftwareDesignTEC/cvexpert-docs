@@ -28,7 +28,7 @@ Los nombres salen de los pipelines, de las referencias de configuración y de lo
 | Recurso | Nombre | Notas | Fuente |
 | --- | --- | --- | --- |
 | API Management | `gabriel-api-management`, API `cv-api`, prefijo `/api/v1` | Tier Consumption (no soporta WebSockets). Certificado `cvexpert-client-cert` | [seguridad-apim.md](seguridad-apim.md), README de Notificaciones |
-| Static Web App | Host `victorious-mushroom-0cd000a10.5.azurestaticapps.net` (nombre del recurso **por confirmar**) | Producción desde `main` y un entorno de vista previa por PR | Workflow de `cv-master` |
+| Static Web App | Host `victorious-mushroom-0cd000a10.5.azurestaticapps.net` (nombre del recurso **por confirmar**) | Producción desde `main` y un entorno de vista previa por PR | Workflow de `cvexpert-web` |
 | Grupo de recursos | `rg-ofertas-postulaciones` (West US, suscripción Azure for Students de Andrés) | Todo lo de Ofertas está aquí | README de Ofertas |
 | Plan de App Service | `plan-ofertas` | Basic B1 | README de Ofertas |
 | App Service | `app-ofertas-andres` | Linux, Java 17 SE, "siempre activo" y certificado obligatorio salvo `/actuator/health` | README de Ofertas |
@@ -51,7 +51,7 @@ Todos son de GitHub Actions. Los pipelines de los backends prueban en cada PR y 
 
 | Repositorio | Workflow | Cuándo corre | Qué hace | Destino |
 | --- | --- | --- | --- | --- |
-| cv-master | `azure-static-web-apps-victorious-mushroom-0cd000a10.yml` | Push a `main` y PR hacia `main` (abrir, actualizar o cerrar) | `npm ci`, lint y tipos, compilación con `VITE_APIM_BASE_URL` y `VITE_GOOGLE_CLIENT_ID`, despliegue y `gh release create` con la versión de `package.json`. Al cerrar un PR borra su vista previa | Static Web App (producción o vista previa) |
+| cvexpert-web | `azure-static-web-apps-victorious-mushroom-0cd000a10.yml` | Push a `main` y PR hacia `main` (abrir, actualizar o cerrar) | `npm ci`, lint y tipos, compilación con `VITE_APIM_BASE_URL` y `VITE_GOOGLE_CLIENT_ID`, despliegue y `gh release create` con la versión de `package.json`. Al cerrar un PR borra su vista previa | Static Web App (producción o vista previa) |
 | cvexpert-mobile | `android-ci-cd.yml` | Push y PR a `main` | Compila el APK de release con JDK 17. Solo en `main`, lo firma y lo sube a Firebase App Distribution | Grupo `testers` |
 | cvexpert-ms-usuarios | `ci.yml` y `cd.yml` (rama `certificado-swagger-postman`, sin fusionar) | CI: cada PR y push a `develop` o `main`. CD: push a `main` que cambie `src/`, `pom.xml` o el workflow, o a mano | `mvn -B verify`. El CD vuelve a probar y despliega `target/app.jar` con OIDC | `cvexpert-usuarios` |
 | cvexpert-ms-cvs | `ci.yml` y `cd.yml` | CI: PR y push a `main`. CD: push a `main` que cambie `app/`, `requirements*.txt` o el workflow | `ruff check` y `pytest`. El CD vuelve a probar y despliega con OIDC en el environment `production` | `cvexpert-ms-cvs` |

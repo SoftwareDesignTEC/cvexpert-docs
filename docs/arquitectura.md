@@ -72,11 +72,11 @@ flowchart LR
     end
 
     N --> SR
-    N -.-> F
+    N --> F
     N --> E
 ```
 
-APIM llama a los cinco backends de la misma forma: presenta el certificado de cliente y sobrescribe los encabezados `X-User-*`. La web se conecta directo a Azure SignalR Service después de pedir el negotiate a Notificaciones por APIM. Las líneas punteadas son partes incompletas: Brecha todavía no publica su evento, y la app Android todavía no registra su token de FCM. El diagrama no muestra las dependencias externas que no son de CVExpert: Gemini, que CVs usa para la IA de redacción, y JSearch, de donde Ofertas importa ofertas reales.
+APIM llama a los cinco backends de la misma forma: presenta el certificado de cliente y sobrescribe los encabezados `X-User-*`. La web se conecta directo a Azure SignalR Service después de pedir el negotiate a Notificaciones por APIM. La línea punteada es la única parte incompleta: Brecha todavía no publica su evento. El diagrama no muestra las dependencias externas que no son de CVExpert: Gemini, que CVs usa para la IA de redacción, y JSearch, de donde Ofertas importa ofertas reales.
 
 ## Reglas del sistema
 
@@ -135,8 +135,8 @@ APIM llama a los cinco backends de la misma forma: presenta el certificado de cl
 
 ### Clientes
 
-- **Web (`cv-master`):** React 19, Vite y TypeScript. Usa un cliente HTTP único que adjunta el `id_token` y cierra la sesión ante un 401. Recibe avisos en vivo por SignalR. Solo muestra el editor de plantillas si `GET /notifications/templates` responde 200.
-- **Android (`cvexpert-mobile`):** Kotlin, Jetpack Compose, Hilt y Retrofit, con arquitectura limpia por capas. Consume el historial de Notificaciones por REST. Registrar el token de FCM y mostrar el push queda fuera de esta fase.
+- **Web (`cvexpert-web`):** React 19, Vite y TypeScript. Usa un cliente HTTP único que adjunta el `id_token` y cierra la sesión ante un 401. Recibe avisos en vivo por SignalR. Solo muestra el editor de plantillas si `GET /notifications/templates` responde 200.
+- **Android (`cvexpert-mobile`):** Kotlin, Jetpack Compose, Hilt y Retrofit, con arquitectura limpia por capas. Consume el historial de Notificaciones por REST y recibe push por FCM desde la versión 0.9.5 ([PR #43](https://github.com/SoftwareDesignTEC/cvexpert-mobile/pull/43)). Al iniciar sesión, y cada vez que FCM le entrega un token nuevo, registra el token con `POST /notifications/devices`, y lo da de baja al cerrar sesión. Con la app abierta, la propia app muestra el aviso y actualiza la campana. El push depende de que el APK se compile con `NOTIFICATIONS_ENABLED=true` y `google-services.json`, como lo hace el pipeline.
 
 ## Diferencias conocidas entre servicios
 

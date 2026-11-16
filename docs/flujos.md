@@ -50,6 +50,13 @@ sequenceDiagram
         CL->>A: GET /notifications/templates
         Note over CL,A: 200 muestra el editor de plantillas, 403 lo oculta. Ver flujo 4
     end
+
+    opt Solo Android
+        CL->>A: POST /notifications/devices con el token de FCM y platform android
+        A->>N: certificado + X-User-Id
+        N->>N: Guarda el token en devices. Si era de otra cuenta, pasa a esta
+        N-->>CL: 201 token nuevo o 200 ya registrado
+    end
 ```
 
 - El directorio se reenvía al iniciar sesión y cada vez que la persona cambia el idioma. Así Notificaciones sabe a qué correo y en qué idioma escribir, sin preguntarle a Usuarios.
@@ -119,7 +126,7 @@ sequenceDiagram
 
 - Si Mongo falla, Notificaciones espera 5 s y abandona el mensaje para que Service Bus lo reintente. Al agotar `MaxDeliveryCount`, Service Bus lo pasa a la dead-letter.
 - Si un canal falla, se registra con su nombre y los demás siguen. El mensaje se completa igual, porque el aviso ya quedó guardado y se puede consultar por REST.
-- El push solo llega si la app registró su token en `POST /notifications/devices`. Android todavía no lo hace en esta fase.
+- El push llega a todos los teléfonos que registraron su token para ese usuario (flujo 1). Android lo hace desde la versión 0.9.5 y lo da de baja con `DELETE /notifications/devices/{token}` al cerrar sesión. Con la app abierta, la propia app muestra el aviso y actualiza la campana.
 - Si un administrador cambia un estado hacia o desde `interested`, el mensaje no pasa el esquema y termina en la dead-letter (ver [arquitectura](arquitectura.md)).
 
 ## 3. Nueva oferta: solo a quien supera su mínimo de compatibilidad
