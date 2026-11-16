@@ -45,11 +45,11 @@ la fecha/hora, sin compartir ID tokens ni datos personales.
   Según el estado comunicado por el equipo, Pérez debe cargar las plantillas y
   resolver la respuesta `500` de IA. Las pruebas locales de CVs que figuran más
   arriba siguen siendo evidencia **local**, no validación de estas E2E.
-- **Trabajo futuro, fuera del cierre de Fase II:** ciclo FCM del **cliente Android**
-  (registro, renovación y eliminación del token, recepción en primer y segundo
-  plano, navegación al aviso). Se conservan el contrato de dispositivos, el
-  código de FCM del backend y sus pruebas. Las pruebas del backend no demuestran
-  entrega real a un dispositivo.
+- **Push en Android (actualización del 16 de noviembre):** el ciclo FCM del
+  **cliente Android** (registro, renovación y eliminación del token, recepción en
+  primer y segundo plano) está integrado desde la versión `0.9.5`. Las pruebas
+  del backend no demuestran la entrega real a un dispositivo: esa evidencia se
+  registra con la prueba en el teléfono del [plan](plan-pruebas.md).
 
 El objetivo inmediato es completar las E2E disponibles con cuentas y datos
 sintéticos, sin alterar información productiva.
@@ -64,4 +64,4 @@ sintéticos, sin alterar información productiva.
 | Usuarios | Corregir las comillas del ejemplo de dirección en el contrato original y documentar las cabeceras de sesión. |
 | Brecha y Notificaciones | Acordar la transformación de cursos y el disparador, implementar el productor y verificar Service Bus, deduplicación y entrega. |
 | Ofertas y entorno local | Iniciar Docker y ejecutar la suite Maven completa para cubrir persistencia y Swagger con Testcontainers. |
-| Android y Notificaciones | El ciclo FCM del cliente Android queda como **trabajo futuro fuera del cierre de Fase II**. Se conserva la cobertura documental y las pruebas del backend. |
+| Android y Notificaciones | El ciclo FCM del cliente Android está integrado desde la versión `0.9.5` ([PR #43](https://github.com/SoftwareDesignTEC/cvexpert-mobile/pull/43), 15 de noviembre). Falta registrar la evidencia de la prueba en el teléfono según el [plan](plan-pruebas.md). |
