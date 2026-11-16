@@ -58,8 +58,8 @@ sintéticos, sin alterar información productiva.
 
 | Responsable | Acción requerida |
 | --- | --- |
-| APIM | Aplicar y comprobar el rol administrativo en las escrituras de ofertas. Acordar la publicación de plantillas de Notificaciones con autorización de administrador. Entregar trazas depuradas de enrutamiento, encabezados y autorización. |
-| App Service y responsables de backend | Verificar mTLS, huella activa, bloqueo de acceso directo y revisión desplegada. Resolver el estado de certificado cliente de CVs y facilitar la configuración efectiva de Ofertas. |
+| APIM | Rol administrativo aplicado en las escrituras de ofertas y en las plantillas de Notificaciones (13 nov 2026); falta comprobarlo con un token de administrador y otro sin ese rol. Las 48 operaciones de la API principal responden `401` sin token. Entregar trazas depuradas de enrutamiento, encabezados y autorización. |
+| App Service y responsables de backend | Verificar mTLS, huella activa, bloqueo de acceso directo y revisión desplegada. Facilitar la configuración efectiva de Ofertas. |
 | Entorno de ensayo | Proporcionar una base aislada, cuentas propietaria/ajena/admin/sin instantánea y datos sintéticos. Ejecutar los escenarios autenticados y las escrituras según el [plan](plan-pruebas.md). |
 | Usuarios | Corregir las comillas del ejemplo de dirección en el contrato original y documentar las cabeceras de sesión. |
 | Brecha y Notificaciones | Acordar la transformación de cursos y el disparador, implementar el productor y verificar Service Bus, deduplicación y entrega. |

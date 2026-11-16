@@ -11,6 +11,14 @@ Este repositorio reúne los contratos de los cinco microservicios, sus escenario
 | [Notificaciones y eventos](docs/notificaciones.md) | Service Bus, SignalR, correo, FCM y adaptación de cursos |
 | [Estado de entrega](docs/estado-entrega.md) | Resultados reproducidos y verificaciones pendientes |
 
+## Operación de APIM y Azure
+
+| Documento | Contenido |
+| --- | --- |
+| [APIM](docs/apim.md) | Mapa de rutas, qué hace APIM en cada llamada y cómo agregar una operación |
+| [Certificado de APIM](docs/certificado-apim.md) | Cómo valida cada microservicio que la llamada viene de APIM |
+| [Azure](docs/azure.md) | Secretos, Service Bus, permisos y despliegue con OIDC |
+
 ## Situación de pruebas E2E (8 de noviembre de 2026)
 
 La colección está preparada para iniciar las E2E de **Ofertas, Postulaciones, Brecha y Notificaciones**. Las de **CVs, generación de PDF e IA** están bloqueadas temporalmente por carga de plantillas y un fallo `500` de IA. El ciclo **FCM del cliente Android** es trabajo futuro, no requisito de cierre de Fase II. La versión Android `0.7.2` fue anunciada como disponible en Firebase, sin prueba acreditada de su inicio de sesión en esta versión. Véase [estado de entrega](docs/estado-entrega.md).
