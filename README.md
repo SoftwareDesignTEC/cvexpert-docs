@@ -7,7 +7,7 @@ Este repositorio reúne los contratos de los cinco microservicios, sus escenario
 | [Contratos OpenAPI](contratos/README.md) | Especificaciones, revisiones de origen, consulta con Swagger y mantenimiento |
 | [Matriz de trazabilidad](docs/matriz-trazabilidad.md) | Operaciones, permisos, DTO, Postman y evidencia por ruta |
 | [Postman y Newman](postman/README.md) | Colección importable, configuración y ejecución por carpeta |
-| [Arquitectura](docs/arquitectura.md) y [seguridad](docs/seguridad-apim.md) | Límites de confianza, almacenamiento, enrutamiento y despliegue |
+| [Documentación de arquitectura](docs/README.md) | Índice de repositorios, [arquitectura](docs/arquitectura.md), [flujos](docs/flujos.md), [seguridad](docs/seguridad.md), [almacenamiento](docs/almacenamiento.md) y [despliegue](docs/despliegue.md) |
 | [Notificaciones y eventos](docs/notificaciones.md) | Service Bus, SignalR, correo, FCM y adaptación de cursos |
 | [Estado de entrega](docs/estado-entrega.md) | Resultados reproducidos y verificaciones pendientes |
 
@@ -21,7 +21,7 @@ Este repositorio reúne los contratos de los cinco microservicios, sus escenario
 
 ## Situación de pruebas E2E (8 de noviembre de 2026)
 
-La colección está preparada para iniciar las E2E de **Ofertas, Postulaciones, Brecha y Notificaciones**. Las de **CVs, generación de PDF e IA** están bloqueadas temporalmente por carga de plantillas y un fallo `500` de IA. El ciclo **FCM del cliente Android** es trabajo futuro, no requisito de cierre de Fase II. La versión Android `0.7.2` fue anunciada como disponible en Firebase, sin prueba acreditada de su inicio de sesión en esta versión. Véase [estado de entrega](docs/estado-entrega.md).
+La colección está preparada para iniciar las E2E de **Ofertas, Postulaciones, Brecha y Notificaciones**. Las de **CVs, generación de PDF e IA** están bloqueadas temporalmente por carga de plantillas y un fallo `500` de IA. El ciclo **FCM del cliente Android** quedó integrado en la versión `0.9.5` (actualización del 16 de noviembre) y su prueba en el teléfono se agregó al [plan E2E](docs/plan-pruebas.md). La versión Android `0.7.2` fue anunciada como disponible en Firebase, sin prueba acreditada de su inicio de sesión en esta versión. Véase [estado de entrega](docs/estado-entrega.md).
 
 ## Validación local
 
