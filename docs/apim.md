@@ -52,7 +52,7 @@ para ordenar el APIM por módulo. Una operación nueva va en los dos.
 5. **Certificado.** Presenta el certificado de cliente al backend (ver
    [certificado-apim.md](certificado-apim.md)).
 
-APIM no cachea respuestas, no reescribe códigos de estado ni cuerpos de error, y ninguna
+Según la configuración documentada, APIM no cachea y conserva los errores JSON del backend; los fallos de gateway y respuestas no JSON siguen las reglas de «Errores del gateway» de este documento. Ninguna
 política valida el tipo de contenido ni lee el cuerpo: JSON y `multipart/form-data` pasan
 igual. El plan Consumption acepta cuerpos de hasta 1 GiB; el tope real lo pone cada
 backend. La tabla de límites de Azure indica 30 s de duración total en Consumption, pero el

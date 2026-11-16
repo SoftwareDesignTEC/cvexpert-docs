@@ -30,6 +30,11 @@ def name_for(case):
 
 
 def body_for(case, spec, operation, success):
+    if "file_var" in case:
+        media = operation.get("requestBody", {}).get("content", {}).get("multipart/form-data", {})
+        if media.get("schema", {}).get("properties", {}).get("file", {}).get("format") != "binary":
+            raise ValueError("Archivo sin contrato multipart binario")
+        return None
     schema = json_schema(spec, operation.get("requestBody", {}))
     if schema is None:
         if "body" in case:
@@ -98,6 +103,8 @@ def make_item(case, specs, published, tests):
         "published": key in published,
         "requiresApimJobRole": role == "admin" and route.startswith("/jobs"),
         "bodyVars": sorted(set(VARIABLE.findall(body or ""))),
+        "fileVar": case.get("file_var"),
+        "fileType": case.get("file_type"),
         "pathVars": path_vars,
         "mode": case.get("mode"),
         "role": role,
@@ -115,6 +122,10 @@ def make_item(case, specs, published, tests):
         "updatedTemplate": case.get("updated_template", False),
         "capture": case.get("capture", {}),
         "captureFirst": case.get("capture_first"),
+        "nonempty": case.get("nonempty", []),
+        "photo": case.get("photo", False),
+        "gap": case.get("gap"),
+        "refresh": case.get("refresh", False),
     }
     if not assertions["statusOnly"]:
         for code in codes:
@@ -131,6 +142,11 @@ def make_item(case, specs, published, tests):
     if body is not None:
         request["header"].append({"key": "Content-Type", "value": "application/json"})
         request["body"] = {"mode": "raw", "raw": body, "options": {"raw": {"language": "json"}}}
+    if "file_var" in case:
+        request["body"] = {"mode": "formdata", "formdata": [
+            {"key": "file", "type": "file", "src": [], "contentType": case["file_type"]},
+        ]}
+        request["description"] += " · Archivo sintético local: " + case["file_var"] + "; habilitar allowUploads y allowWrites en ensayo. La carga válida crea un blob público sin endpoint REST de baja: acordar limpieza con el propietario."
     text = tests.replace("CASO", json.dumps(assertions, ensure_ascii=False, separators=(",", ":")), 1)
     return {
         "name": name_for(case),

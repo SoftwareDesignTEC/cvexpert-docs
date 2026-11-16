@@ -122,7 +122,7 @@ APIM llama a los cinco backends de la misma forma: presenta el certificado de cl
 - **Stack:** Node.js 24, Express 5, TypeScript y PostgreSQL con migraciones SQL propias.
 - **Endpoints principales:** `PUT /skills-gap/input` (guarda la instantánea de habilidades del usuario), `GET /skills-gap`, `POST /skills-gap/evaluate`, `POST /skills-gap/recommendations` y `GET /courses`.
 - **Eventos:** debería publicar `course.recommended`, pero todavía no tiene publicador.
-- **Estado:** el CD está apagado por defecto (`ENABLE_AZURE_DEPLOY`). Si hay una versión desplegada y qué rutas están publicadas en APIM: **por confirmar**. El inventario de APIM del 2026-11-08 solo registra `GET /skills-gap`, `GET /courses` y `PUT /skills-gap/input`.
+- **Estado:** el CD requiere habilitación explícita (`ENABLE_AZURE_DEPLOY`). El [job de despliegue](https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188/job/130921348838) terminó correctamente para fab6c726e7f29c4e0d53f0ad02e0957046a04926 el 11 nov en Costa Rica; no prueba el SHA hoy activo ni E2E. El inventario ARM histórico conserva tres rutas de negocio; las dos nuevas están informadas en [seguridad-apim.md](seguridad-apim.md), pendientes de traza autenticada e inventario actual.
 - **Contrato:** [brecha-cursos.openapi.yaml](../contratos/brecha-cursos.openapi.yaml).
 
 ### Notificaciones
@@ -138,7 +138,9 @@ APIM llama a los cinco backends de la misma forma: presenta el certificado de cl
 - **Web (`cvexpert-web`):** React 19, Vite y TypeScript. Usa un cliente HTTP único que adjunta el `id_token` y cierra la sesión ante un 401. Recibe avisos en vivo por SignalR. Solo muestra el editor de plantillas si `GET /notifications/templates` responde 200.
 - **Android (`cvexpert-mobile`):** Kotlin, Jetpack Compose, Hilt y Retrofit, con arquitectura limpia por capas. Consume el historial de Notificaciones por REST y recibe push por FCM desde la versión 0.9.5 ([PR #43](https://github.com/SoftwareDesignTEC/cvexpert-mobile/pull/43)). Al iniciar sesión, y cada vez que FCM le entrega un token nuevo, registra el token con `POST /notifications/devices`, y lo da de baja al cerrar sesión. Con la app abierta, la propia app muestra el aviso y actualiza la campana. El push depende de que el APK se compile con `NOTIFICATIONS_ENABLED=true` y `google-services.json`, como lo hace el pipeline.
 
+La recepción FCM anterior describe el código integrado desde 0.9.5; su entrega real en teléfono sigue pendiente de evidencia correlacionada con el historial. Ver [plan E2E](plan-pruebas.md).
+
 ## Diferencias conocidas entre servicios
 
 - **Estado `interested`.** Ofertas puede mover una postulación hacia o desde `interested`, pero el esquema del evento y `NotificationEventValidator` solo aceptan `applied`, `in-progress`, `interview` y `rejected`. Si un administrador cambia un estado hacia o desde `interested`, el mensaje `application.status_changed` termina en la cola de errores. Hay que ampliar el contrato o que Ofertas no publique esas transiciones.
-- **Rutas sin registrar en APIM.** El inventario de APIM del 2026-11-08 ([apim-rutas.json](../contratos/apim-rutas.json)) es anterior a `POST /jobs/refresh`, las plantillas de Notificaciones (conectadas el 2026-11-11, según su README), `POST /cvs/photos`, `POST /cvs/ai/generate-text`, `POST /cvs/ai/generate-cv` y `POST /skills-gap/evaluate` y `/recommendations`. Qué rutas están publicadas hoy: **por confirmar** con una nueva exportación.
+- **Procedencia de rutas APIM.** El inventario fechado 8 nov conserva 41 entradas e incluye refresh por PR #4. [Seguridad de APIM](seguridad-apim.md) informa después plantillas, IA y brecha por oferta; [APIM](apim.md) documenta también fotografías. Son informes de configuración separados del inventario ARM y de la ejecución E2E. Confirmar IDs reales, mapeo y revisión activa mediante exportación/traza; no declarar una ruta ausente solo por no figurar en el inventario antiguo.

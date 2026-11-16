@@ -6,7 +6,7 @@ La [guía del servicio](../contratos/notificaciones.origen.md) conserva los ejem
 
 El consumidor valida el evento y usa `eventId` para deduplicar. La notificación persistida es consultable por REST y tiene un identificador propio. SignalR, push y correo son entregas del mismo aviso, sujetas a configuración. Correo usa Azure Communication Services y el correo/idioma del directorio. SignalR con Azure configurado devuelve una URL y un token efímero en `POST /notifications/hub/negotiate`. Después de negociar vía APIM, el cliente se conecta directamente a Azure SignalR. En desarrollo, el fallback local utiliza la negociación estándar de SignalR y su respuesta difiere del contrato para Azure.
 
-**Push en Android:** el ciclo completo de FCM está integrado desde la versión 0.9.5 de la app ([PR #43 de cvexpert-mobile](https://github.com/SoftwareDesignTEC/cvexpert-mobile/pull/43), 2026-11-15): registro y baja del token, recepción del push y aviso con la app abierta.
+**Push en Android:** el ciclo completo de FCM está integrado desde la versión 0.9.5 de la app ([PR #43 de cvexpert-mobile](https://github.com/SoftwareDesignTEC/cvexpert-mobile/pull/43), 2026-11-15): registro y baja del token, manejador de recepción del push y aviso con la app abierta. Esto describe implementación: falta acreditar recepción real en teléfono, pertenencia y correlación con historial mediante el [plan E2E](plan-pruebas.md), con APK de distribución 0.9.5 o posterior.
 
 ## Push Android
 
@@ -42,7 +42,7 @@ Un mensaje por destinatario en `notificaciones-eventos`. El sobre admite `schema
 | --- | --- | --- |
 | `application.status_changed` | Ofertas y postulaciones | Cambio administrativo de estado |
 | `job.new` | Ofertas y postulaciones | Alta de oferta, para usuarios con alertas habilitadas y compatibilidad suficiente |
-| `cv.generated` | CVs | Creación del CV tras un uso registrado de las operaciones de experiencia. El publicador se selecciona por configuración |
+| `cv.generated` | CVs | Creación del CV tras uso IA registrado, incluidas experiencia, texto y generación completa. El publicador se selecciona por configuración |
 | `course.recommended` | Pendiente en Brecha y cursos | Consumidor, esquema y plantillas disponibles. El código de Brecha devuelve resultados REST y carece de publicador Service Bus |
 
 El consumidor envía a la cola de mensajes fallidos por `InvalidJson` o `SchemaValidationFailed`. Los fallos transitorios siguen los reintentos de Service Bus. Verifique configuración de la cola, permisos de envío/escucha, deduplicación y entregas por canal en un ambiente aislado.
@@ -54,7 +54,7 @@ El consumidor envía a la cola de mensajes fallidos por `InvalidJson` o `SchemaV
 | Modelo REST de Brecha | Adaptación necesaria para el evento |
 | --- | --- |
 | `title`, `platform`, `url` | Transferir cuando cumplen los tipos y la URL HTTP/HTTPS del esquema. |
-| `isPaid` | Transferir el valor conocido. `CourseSuggestion` lo admite como opcional, por lo que una sugerencia sin ese dato requiere una fuente verificable antes de publicar. |
+| `isPaid` | Transferir el valor conocido. El catálogo del contrato actual exige ese campo; una entrada heredada sin ese dato requiere una fuente verificable antes de publicar. |
 | `durationHours` entero o nulo | Convertir las horas conocidas a texto de presentación si se decide enviar `duration`. Una duración desconocida se puede omitir o enviar como nula. |
 | `skills` arreglo | Seleccionar la habilidad que motivó la recomendación si el productor puede identificarla. Si falta el criterio, omitir `skill` o enviarla nula. |
 | `id`, `logoUrl` | Campos del modelo REST sin equivalente obligatorio en `data`. |

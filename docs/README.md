@@ -1,6 +1,6 @@
 # Documentación de arquitectura de CVExpert (Fase II)
 
-CVExpert son cinco microservicios, cada uno en su repositorio, detrás de Azure API Management (APIM), y dos clientes con la misma funcionalidad: una web en React y una app Android. Esta carpeta describe cómo encajan esas piezas, cómo se protegen, dónde guarda sus datos cada servicio y cómo se despliegan.
+CVExpert son cinco microservicios, cada uno en su repositorio, detrás de Azure API Management (APIM), y dos clientes: una web en React y una app Android. La paridad funcional entre ambos es un objetivo; todavía existen integraciones pendientes en la web, detalladas en la [auditoría](auditoria.md) y el [estado de entrega](estado-entrega.md). Esta carpeta describe cómo encajan esas piezas, cómo se protegen, dónde guarda sus datos cada servicio y cómo se despliegan.
 
 Todo lo que aparece aquí se sacó del código, la configuración, los pipelines y los README de cada repositorio (ramas `main` revisadas el 2026-11-15, salvo donde se indica otra). Lo que no se pudo confirmar en el código está marcado como **por confirmar**.
 
@@ -18,7 +18,8 @@ Documentos anteriores que se conservan como detalle:
 
 - [Seguridad de APIM](seguridad-apim.md): inventario de rutas del gateway y configuración de certificados consultada en Azure.
 - [Integración de Notificaciones](notificaciones.md): canales, push en Android y adaptación de `course.recommended`.
-- [Matriz de trazabilidad](matriz-trazabilidad.md), [plan de pruebas](plan-pruebas.md), [auditoría](auditoria.md) y [estado de entrega](estado-entrega.md).
+- [Matriz de trazabilidad](matriz-trazabilidad.md), [plan de pruebas](plan-pruebas.md), [auditoría](auditoria.md) y [estado de entrega](estado-entrega.md): 51 operaciones, 98 solicitudes Postman y 28 casos E2E definidos.
+- [Seguimiento de integración](seguimiento-integracion.md): verificaciones vigentes después del merge del PR #5.
 
 ## Repositorios
 
@@ -31,11 +32,11 @@ Todos están en la organización `SoftwareDesignTEC` de GitHub. El dueño sale d
 | [cvexpert-ms-usuarios](https://github.com/SoftwareDesignTEC/cvexpert-ms-usuarios) | Perfil, rol, sesiones, textos legales y ayuda | Gabriel Cabrera | Java 17, Spring Boot 3.3, MongoDB | App Service `cvexpert-usuarios`, solo por APIM |
 | [cvexpert-ms-cvs](https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs) | CVs, plantillas e IA de redacción | Gabriel Pérez | Python 3.12, FastAPI, MongoDB | App Service `cvexpert-ms-cvs`, solo por APIM |
 | [cvexpert-ms-ofertas-postulaciones](https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones) | Ofertas, compatibilidad, alertas y postulaciones | Andrés Zumbado | Java 17, Spring Boot 4.1, PostgreSQL 18 | App Service `app-ofertas-andres`, solo por APIM |
-| [cvexpert-ms-brecha-cursos](https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos) | Brecha de habilidades y catálogo de cursos | Justin Mayorga | Node.js 24, Express 5, TypeScript, PostgreSQL | App Service `cvexpert-ms-brecha-cursos`. El CD está apagado: **por confirmar** si hay una versión desplegada |
+| [cvexpert-ms-brecha-cursos](https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos) | Brecha de habilidades y catálogo de cursos | Justin Mayorga | Node.js 24, Express 5, TypeScript, PostgreSQL | App Service `cvexpert-ms-brecha-cursos`. Job de despliegue de fab6c726… exitoso (11 nov, Costa Rica); revisión activa y E2E por verificar, ver [despliegue](despliegue.md) |
 | [cvexpert-ms-notificaciones](https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones) | Consumo de eventos, historial y entrega por SignalR, push y correo | Samuel Fajardo | .NET 8, ASP.NET Core, MongoDB | App Service `cvexpert-notificaciones`, solo por APIM |
 | [cvexpert-docs](https://github.com/SoftwareDesignTEC/cvexpert-docs) | Contratos, Postman y esta documentación | Justin Mayorga | Markdown, OpenAPI, Python y Node para validar | No se despliega |
 
-APIM no tiene repositorio propio. Sus políticas viven en el recurso `gabriel-api-management` (API `cv-api`) y no están versionadas. Quién lo administra: **por confirmar**.
+APIM no tiene repositorio propio. Sus políticas viven en el recurso `gabriel-api-management` (API `cv-api`) y no están versionadas. APIM y sus certificados corresponden a Cabrera; la exportación vigente de políticas sigue por verificar.
 
 La URL pública de los cinco backends es la del gateway, `https://gabriel-api-management.azure-api.net/api/v1`. Cada App Service rechaza las llamadas que no traen el certificado de cliente de APIM (ver [seguridad](seguridad.md)).
 

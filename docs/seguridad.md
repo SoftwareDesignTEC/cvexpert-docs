@@ -6,7 +6,7 @@ La seguridad de CVExpert se apoya en dos fronteras. Entre el cliente y APIM, el 
 flowchart TB
     CL["Cliente web o Android"] -- "1. Bearer id_token de Google" --> A["APIM<br/>validate-jwt"]
     A -- "2. TLS con certificado de cliente<br/>3. X-User-Id, X-User-Email, X-User-Role" --> AS["App Service<br/>Client certificate mode = Required"]
-    AS -- "X-ARR-ClientCert" --> APP["Aplicación<br/>compara la huella y la vigencia"]
+    AS -- "X-ARR-ClientCert" --> APP["Aplicación<br/>verifica según el servicio"]
     APP -- "Referencias @Microsoft.KeyVault" --> KV["Key Vault kv-cvexpert"]
 ```
 
@@ -41,7 +41,7 @@ Así reacciona cada backend cuando falta la identidad:
 
 ### De dónde sale el rol
 
-- **Lo que dice el código y los README.** El README de Notificaciones y el inventario de APIM dicen que, en las rutas de administración, APIM compara el correo del token con una lista configurada de administradores. Si coincide, agrega `X-User-Role: admin`. Si no, responde 403 sin llegar al backend. En las escrituras de ofertas (`POST`, `PUT` y `DELETE /jobs`), el inventario del 2026-11-08 muestra que APIM **elimina** `X-User-Role`, así que esas rutas responden 403 incluso a un administrador.
+- **Lo que dice el código y los README.** El README de Notificaciones y el inventario de APIM dicen que, en las rutas de administración, APIM compara el correo del token con una lista configurada de administradores. Si coincide, agrega `X-User-Role: admin`. Si no, responde 403 sin llegar al backend. El inventario histórico del 2026-11-08 registraba eliminación del rol en escrituras de ofertas. Ese diagnóstico no es el estado vigente informado: Cabrera documenta desde el **13 de noviembre** autorización administrativa e inyección de `X-User-Role: admin` en `POST /jobs`, `PUT /jobs/{id}` y `DELETE /jobs/{id}`, además de plantillas y cambio administrativo de estado (ver [seguridad de APIM](seguridad-apim.md) y [operación APIM](apim.md)). Falta verificarlo con tokens de administrador y no administrador en ensayo.
 - **Usuarios guarda su propio rol.** Asigna `admin` a los correos de `ADMIN_EMAILS` al crear o leer el perfil, y lo devuelve dentro del perfil. Ningún otro servicio lo consulta.
 - **Por confirmar.** Que APIM obtenga el rol consultando a Usuarios y lo guarde en caché 5 minutos no aparece en ningún repositorio ni en el inventario. Si así está configurado, hay que exportar la política para documentarla. Si no, la lista de correos de APIM y `ADMIN_EMAILS` de Usuarios se mantienen por separado y pueden quedar desalineadas.
 
@@ -62,7 +62,7 @@ Validar el encabezado solo es seguro con el modo `Required`. El certificado de A
 | Notificaciones | `ApimCertificateMiddleware` | Huella y vigencia | `Apim__CertificateThumbprint` | `/health` | 403 |
 
 - En todos, menos Brecha, si la variable está vacía no se valida nada. Así se trabaja en local y en las pruebas. Brecha falla cerrado: solo se puede saltar el chequeo con `APIM_ALLOW_INSECURE_LOCAL=true` fuera de Azure.
-- **Por confirmar:** el modo de certificado efectivo de cada App Service. En la consulta registrada en [seguridad-apim.md](seguridad-apim.md), CVs tenía `clientCertEnabled` desactivado. Notificaciones documenta pruebas de rechazo hechas el 2026-11-06.
+- **Configuración consultada y verificación actual:** [seguridad-apim.md](seguridad-apim.md) informa CVs con HTTPS, `clientCertEnabled` habilitado y modo `Required`, excluyendo /health, en el corte del 8 nov; [certificado-apim.md](certificado-apim.md) también lo informa exigido el 10 nov. El middleware de la revisión auditada solo compara huella, sin vigencia. Confirmar configuración/huella hoy y traza autenticada; esta reconciliación no consulta Azure.
 - Las huellas no se copian en esta documentación. Se configuran como App Settings normales, porque no son secretas, pero identifican el certificado vigente.
 
 ## 4. Key Vault
@@ -107,5 +107,5 @@ Todo cambio entra por pull request revisado por otro integrante. No se hace push
 
 - **Certificado compartido.** Los cinco backends aceptan el mismo certificado. Quien tenga su clave privada podría llamar directo a cualquiera y falsificar la identidad.
 - **Backends públicos.** APIM es Consumption y no tiene red privada, así que los App Services aceptan tráfico público. Solo los protege el modo `Required` más la huella.
-- **CVs** no revisa la vigencia del certificado, y su modo de App Service está **por confirmar**.
+- **CVs** no revisa la vigencia en el middleware auditado. Los informes de configuración indican modo Required; queda verificar la configuración efectiva actual y el flujo autenticado, sin confundir ambos controles.
 - **Usuarios** depende de una rama sin fusionar. Si se desplegara el código de `main`, la aplicación no validaría la huella y solo quedaría el modo `Required` del App Service.

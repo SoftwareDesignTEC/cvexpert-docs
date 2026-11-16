@@ -26,6 +26,63 @@ if (passed && !expected.statusOnly) {
         });
         if (passed) {
             const data = pm.response.json();
+            if (expected.refresh) {
+                verify("Contadores de recarga de ofertas", () => {
+                    for (const field of ["created", "updated", "failedQueries"]) {
+                        pm.expect(data[field]).to.be.a("number");
+                        pm.expect(Number.isSafeInteger(data[field]) && data[field] >= 0).to.equal(true);
+                    }
+                });
+                if (passed) pm.variables.set("runJobRefreshComplete", "true");
+            }
+            for (const field of expected.nonempty) {
+                verify("Contenido no vacío de " + field, () => pm.expect(data[field]).to.be.a("string").and.not.empty);
+            }
+            if (expected.photo) {
+                verify("URL pública HTTPS de fotografía", () => pm.expect(data.url).to.match(/^https:\/\//));
+            }
+            if (expected.gap) {
+                verify("Resultado asociado a la proyección sintética", () => {
+                    pm.expect(data.cvId).to.equal("cv:test");
+                    pm.expect(data.dataSource).to.equal("client_request");
+                    pm.expect(data.results).to.have.lengthOf(1);
+                    pm.expect(data.results[0].jobId).to.equal("job:test");
+                });
+                const result = data.results[0];
+                const empty = expected.gap.startsWith("empty");
+                verify("Cobertura documental y ausencias", () => {
+                    pm.expect(result.status).to.equal(empty ? "insufficient_information" : "partial");
+                    pm.expect(result.documentedCoveragePercent).to.equal(empty ? null : 66.67);
+                    pm.expect(result.notDocumentedSkills).to.eql(empty ? [] : ["Docker"]);
+                });
+                if (expected.gap === "levels") {
+                    verify("Niveles explícitos separados de cobertura", () => {
+                        pm.expect(result.levelAnalysis.scale).to.equal("cv-skill-v1");
+                        pm.expect(result.levelAnalysis.belowRequiredCount).to.equal(1);
+                        pm.expect(result.levelAnalysis.meetsRequiredCount).to.equal(1);
+                        pm.expect(result.skillLevelAssessments[0].requiredLevel).to.equal("advanced");
+                        pm.expect(result.skillLevelAssessments[0].deficitSteps).to.equal(1);
+                    });
+                }
+                if (expected.gap === "names") {
+                    verify("Respuesta compatible sin texto", () => {
+                        pm.expect(result).to.not.have.property("levelAnalysis");
+                        pm.expect(result).to.not.have.property("skillLevelAssessments");
+                    });
+                }
+                if (expected.gap === "courses" || expected.gap === "empty_courses") {
+                    verify("Recomendaciones por ausencia y catálogo", () => {
+                        pm.expect(result.recommendations).to.have.lengthOf(empty ? 0 : 1);
+                        for (const recommendation of result.recommendations) {
+                            pm.expect(recommendation.skillName).to.equal("Docker");
+                            pm.expect(recommendation.courses.length).to.be.at.most(5);
+                            const ids = recommendation.courses.map(course => course.id);
+                            pm.expect(new Set(ids).size).to.equal(ids.length);
+                            if (recommendation.catalogMatch !== "matched") pm.expect(ids).to.have.lengthOf(0);
+                        }
+                    });
+                }
+            }
             for (const [key, value] of Object.entries(expected.checks)) {
                 const wanted = typeof value === "string" ? pm.variables.replaceIn(value) : value;
                 verify("Valor esperado de " + key, () => pm.expect(data[key]).to.eql(wanted));

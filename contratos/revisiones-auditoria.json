@@ -1,0 +1,1095 @@
+{
+  "fecha": "2026-11-16",
+  "organizacion": "SoftwareDesignTEC",
+  "base_docs": "61039b25ec18681ed8ff5ddfca326806e62c5c88",
+  "nota": "Consulta de main, develop (si existe), PR abiertos y cinco ejecuciones recientes de main. Metadatos de GitHub no sustituyen una traza E2E ni acreditan la revisión actualmente activa en Azure.",
+  "repositorios": [
+    {
+      "repositorio": "cvexpert-ms-usuarios",
+      "main": "35adbede8c1492941b0d2cda42460fe45f8ccd2c",
+      "develop": "35adbede8c1492941b0d2cda42460fe45f8ccd2c",
+      "prs_abiertos": [
+        {
+          "number": 2,
+          "title": "Certificado de APIM, CI/CD, Swagger UI y Postman",
+          "head": "certificado-swagger-postman",
+          "sha": "7cb84d9ae5416569adb93d161a4a7b3cd84c1269",
+          "base": "main",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-usuarios/pull/2",
+          "draft": false
+        }
+      ],
+      "acciones_main_consultadas": [],
+      "jobs_despliegue_consultados": []
+    },
+    {
+      "repositorio": "cvexpert-ms-cvs",
+      "main": "144e0d67d9efb04b469e92ba3e2343dedfa9d196",
+      "develop": null,
+      "prs_abiertos": [],
+      "acciones_main_consultadas": [
+        {
+          "name": "CI",
+          "sha": "144e0d67d9efb04b469e92ba3e2343dedfa9d196",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43617370045",
+          "created": "2026-11-14T16:45:49Z",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "name": "CD",
+          "sha": "144e0d67d9efb04b469e92ba3e2343dedfa9d196",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43617369964",
+          "created": "2026-11-14T16:45:49Z",
+          "path": ".github/workflows/cd.yml"
+        },
+        {
+          "name": "CI",
+          "sha": "a9092fe6c38d83431f8e9cfc3ca507e27e789f99",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43611678280",
+          "created": "2026-11-14T15:43:11Z",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "name": "CD",
+          "sha": "a9092fe6c38d83431f8e9cfc3ca507e27e789f99",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43611678191",
+          "created": "2026-11-14T15:43:11Z",
+          "path": ".github/workflows/cd.yml"
+        },
+        {
+          "name": "CI",
+          "sha": "0112607b491cc58b3ab96a563de113458b0e345b",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43144431434",
+          "created": "2026-11-12T02:53:06Z",
+          "path": ".github/workflows/ci.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": [
+        {
+          "name": "test",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set up Python",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Test",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Set up Python",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43617369964/job/132515264765"
+        },
+        {
+          "name": "deploy",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Azure login (OIDC)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Deploy to Azure App Service",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Azure login (OIDC)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-cvs/actions/runs/43617369964/job/132515384730"
+        }
+      ]
+    },
+    {
+      "repositorio": "cvexpert-ms-ofertas-postulaciones",
+      "main": "2e9ea432b4b10f5fbe53941da2f824d084a908c7",
+      "develop": null,
+      "prs_abiertos": [],
+      "acciones_main_consultadas": [
+        {
+          "name": "CI",
+          "sha": "2e9ea432b4b10f5fbe53941da2f824d084a908c7",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/actions/runs/43497237108",
+          "created": "2026-11-13T19:58:50Z",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "name": "CI",
+          "sha": "7db8e034739bf7fd83d14d29fb2b7a175e823942",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/actions/runs/43138281019",
+          "created": "2026-11-12T01:59:50Z",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "name": "CI",
+          "sha": "9212c2a6ef7c70d64f285515cc02e6c348fbf73d",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/actions/runs/42703255452",
+          "created": "2026-11-09T21:31:11Z",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "name": "CI",
+          "sha": "f7f39d9e1bad28f9abf6eb707b0309330cec79db",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/actions/runs/42694987859",
+          "created": "2026-11-09T20:39:03Z",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "name": "CI",
+          "sha": "1a92d4273f60e8b4c131dfed1ed2bc22d1ac2768",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-ofertas-postulaciones/actions/runs/42692539423",
+          "created": "2026-11-09T20:23:44Z",
+          "path": ".github/workflows/ci.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": []
+    },
+    {
+      "repositorio": "cvexpert-ms-brecha-cursos",
+      "main": "fab6c726e7f29c4e0d53f0ad02e0957046a04926",
+      "develop": "fb4c745065260989b2fa7423ca779f7535a8bd45",
+      "prs_abiertos": [
+        {
+          "number": 33,
+          "title": "feat(course-sync): add reviewed real-course catalog demonstration",
+          "head": "codex/course-sync-first-real-courses",
+          "sha": "b13871844164cb3f6a70dc006962859b40666fc2",
+          "base": "develop",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/pull/33",
+          "draft": false
+        }
+      ],
+      "acciones_main_consultadas": [
+        {
+          "name": "CI/CD",
+          "sha": "fab6c726e7f29c4e0d53f0ad02e0957046a04926",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188",
+          "created": "2026-11-12T02:05:12Z",
+          "path": ".github/workflows/ci-cd.yml"
+        },
+        {
+          "name": "Azure OIDC diagnostic (no deployment)",
+          "sha": "f08d8a37f33435456849a76b1afac26df77a1865",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/42381012224",
+          "created": "2026-11-07T14:18:56Z",
+          "path": ".github/workflows/azure-oidc-check.yml"
+        },
+        {
+          "name": "CI/CD",
+          "sha": "f08d8a37f33435456849a76b1afac26df77a1865",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/42379893166",
+          "created": "2026-11-07T14:04:52Z",
+          "path": ".github/workflows/ci-cd.yml"
+        },
+        {
+          "name": "CI/CD",
+          "sha": "fc31b4d69ced9e584e62b7ed4c13865e6b1e9f17",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/42120700369",
+          "created": "2026-11-05T22:20:48Z",
+          "path": ".github/workflows/ci-cd.yml"
+        },
+        {
+          "name": "Azure OIDC diagnostic (no deployment)",
+          "sha": "2fe9df0ee6ed8f9d595350c4b3e7f40b48b2efa4",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/41964020168",
+          "created": "2026-11-05T03:49:55Z",
+          "path": ".github/workflows/azure-oidc-check.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": [
+        {
+          "name": "Classify paths",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate workflows with pinned actionlint and checksum",
+              "conclusion": "success"
+            },
+            {
+              "name": "Test workflow guards",
+              "conclusion": "success"
+            },
+            {
+              "name": "Classify changes (unknown paths run CI)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188/job/130920871443"
+        },
+        {
+          "name": "Node 24 / PostgreSQL 17",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Initialize containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm ci",
+              "conclusion": "success"
+            },
+            {
+              "name": "Block high and critical vulnerabilities (including dev dependencies)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm run build",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm test",
+              "conclusion": "success"
+            },
+            {
+              "name": "Create disposable owner and SELECT-only application role",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare disposable administrative roles and local TLS",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run npm run db:test",
+              "conclusion": "success"
+            },
+            {
+              "name": "Retain tested build for ZIP verification",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Stop containers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188/job/130920941967"
+        },
+        {
+          "name": "Verify production ZIP (no deployment)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build ZIP and boot its extracted production server",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188/job/130921209640"
+        },
+        {
+          "name": "CI",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require tests or an explicitly documentation-only PR",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188/job/130921312670"
+        },
+        {
+          "name": "Azure OIDC (disabled by default)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Require explicit environment configuration",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906",
+              "conclusion": "success"
+            },
+            {
+              "name": "Read-only safety checks (explicit network model, runtime and separate identity)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Deploy package with Entra token (no publish profile)",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-brecha-cursos/actions/runs/43138922188/job/130921348838"
+        }
+      ]
+    },
+    {
+      "repositorio": "cvexpert-ms-notificaciones",
+      "main": "5ea5ee82d5111f451dbeb983aedcff8c6cdcf430",
+      "develop": null,
+      "prs_abiertos": [],
+      "acciones_main_consultadas": [
+        {
+          "name": "CI/CD Notificaciones",
+          "sha": "5ea5ee82d5111f451dbeb983aedcff8c6cdcf430",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43343380946",
+          "created": "2026-11-13T01:14:22Z",
+          "path": ".github/workflows/deploy.yml"
+        },
+        {
+          "name": "CI/CD Notificaciones",
+          "sha": "c5ec343fb61dfe6d134fbfdb99f57afc1a4490f5",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43076804865",
+          "created": "2026-11-11T18:20:19Z",
+          "path": ".github/workflows/deploy.yml"
+        },
+        {
+          "name": "CI/CD Notificaciones",
+          "sha": "cda92c03aac350452263ec29bd787d4a1c61e00d",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43075847233",
+          "created": "2026-11-11T18:14:25Z",
+          "path": ".github/workflows/deploy.yml"
+        },
+        {
+          "name": "CI/CD Notificaciones",
+          "sha": "30f82a89154bc1db88ba8f2f3110117587b80f34",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43072015870",
+          "created": "2026-11-11T17:50:30Z",
+          "path": ".github/workflows/deploy.yml"
+        },
+        {
+          "name": "CI/CD Notificaciones",
+          "sha": "181e34fc09a68a287dbab99982ab6374bf60f943",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43071421353",
+          "created": "2026-11-11T17:46:44Z",
+          "path": ".github/workflows/deploy.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": [
+        {
+          "name": "build",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/setup-dotnet@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Restaurar",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compilar",
+              "conclusion": "success"
+            },
+            {
+              "name": "Probar",
+              "conclusion": "success"
+            },
+            {
+              "name": "Publicar",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/setup-dotnet@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43343380946/job/131616813800"
+        },
+        {
+          "name": "deploy",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/download-artifact@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Desplegar en App Service",
+              "conclusion": "success"
+            },
+            {
+              "name": "Comprobar /health",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-ms-notificaciones/actions/runs/43343380946/job/131617082897"
+        }
+      ]
+    },
+    {
+      "repositorio": "cvexpert-mobile",
+      "main": "ab51927dbe676f93ff302254eb24d71737463632",
+      "develop": "57d46c2f52f4b78c07ef02b813f0cf1f8be88a60",
+      "prs_abiertos": [],
+      "acciones_main_consultadas": [
+        {
+          "name": "Android CI/CD",
+          "sha": "ab51927dbe676f93ff302254eb24d71737463632",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43814519879",
+          "created": "2026-11-16T06:06:22Z",
+          "path": ".github/workflows/android-ci-cd.yml"
+        },
+        {
+          "name": "Android CI/CD",
+          "sha": "7932a1236e06cb7a5a5f024db66a08ffa86340f6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43801340833",
+          "created": "2026-11-16T03:59:25Z",
+          "path": ".github/workflows/android-ci-cd.yml"
+        },
+        {
+          "name": "Android CI/CD",
+          "sha": "1f2299863399b1be21eb38fea7231434bc32c345",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43788298689",
+          "created": "2026-11-16T01:47:21Z",
+          "path": ".github/workflows/android-ci-cd.yml"
+        },
+        {
+          "name": "Android CI/CD",
+          "sha": "81eea25380d00dcbd8cbc16231c3565866e395ae",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43769243384",
+          "created": "2026-11-15T22:25:48Z",
+          "path": ".github/workflows/android-ci-cd.yml"
+        },
+        {
+          "name": "Android CI/CD",
+          "sha": "a013b687071b4c2de686f1a7dd4a7d9f02bee7b7",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43520214485",
+          "created": "2026-11-13T22:33:16Z",
+          "path": ".github/workflows/android-ci-cd.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": [
+        {
+          "name": "Build, tests and lint",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout repository",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set up JDK 17",
+              "conclusion": "success"
+            },
+            {
+              "name": "Grant Gradle permissions",
+              "conclusion": "success"
+            },
+            {
+              "name": "Restore google-services.json",
+              "conclusion": "success"
+            },
+            {
+              "name": "Compile and test Android",
+              "conclusion": "success"
+            },
+            {
+              "name": "Save development APK",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Set up JDK 17",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout repository",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43814519879/job/133123400916"
+        },
+        {
+          "name": "Publish stable Android APK",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Pull ghcr.io/wzieba/firebase-distribution-github-action:sha-344aa66",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout repository",
+              "conclusion": "success"
+            },
+            {
+              "name": "Set up JDK 17",
+              "conclusion": "success"
+            },
+            {
+              "name": "Grant Gradle permissions",
+              "conclusion": "success"
+            },
+            {
+              "name": "Restore google-services.json",
+              "conclusion": "success"
+            },
+            {
+              "name": "Restore release keystore",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build signed release",
+              "conclusion": "success"
+            },
+            {
+              "name": "Show release signing certificate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Upload to Firebase App Distribution",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Set up JDK 17",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout repository",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-mobile/actions/runs/43814519879/job/133124401848"
+        }
+      ]
+    },
+    {
+      "repositorio": "cvexpert-web",
+      "main": "9f0242645876fc87132313ae0c3ef78ba726d3fe",
+      "develop": null,
+      "prs_abiertos": [
+        {
+          "number": 52,
+          "title": "Feat/ux sidebar y asistente",
+          "head": "feat/ux-sidebar-y-asistente",
+          "sha": "25fb281228384e0456024e46a404e2497d37e2fb",
+          "base": "main",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/pull/52",
+          "draft": false
+        },
+        {
+          "number": 51,
+          "title": "feat(web): actualizar brechas y agregar catalogo de cursos",
+          "head": "feat/web-brechas-por-oferta",
+          "sha": "f623b62a5faf2b40ff58fb48a0051d8494f2244b",
+          "base": "main",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/pull/51",
+          "draft": false
+        }
+      ],
+      "acciones_main_consultadas": [
+        {
+          "name": "Azure Static Web Apps CI/CD",
+          "sha": "9f0242645876fc87132313ae0c3ef78ba726d3fe",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43628127740",
+          "created": "2026-11-14T18:42:49Z",
+          "path": ".github/workflows/azure-static-web-apps-victorious-mushroom-0cd000a10.yml"
+        },
+        {
+          "name": "Azure Static Web Apps CI/CD",
+          "sha": "ec4754e79bc65fdbeea183647c7f1fd551210469",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43626165130",
+          "created": "2026-11-14T18:21:42Z",
+          "path": ".github/workflows/azure-static-web-apps-victorious-mushroom-0cd000a10.yml"
+        },
+        {
+          "name": "Azure Static Web Apps CI/CD",
+          "sha": "ea78f04abed834af6c75af90e3f1cd97e1093e46",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43617847814",
+          "created": "2026-11-14T16:51:03Z",
+          "path": ".github/workflows/azure-static-web-apps-victorious-mushroom-0cd000a10.yml"
+        },
+        {
+          "name": "Azure Static Web Apps CI/CD",
+          "sha": "aa9821bd33271c19f9e0341b54ea1e7434d6972d",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43608574126",
+          "created": "2026-11-14T15:08:43Z",
+          "path": ".github/workflows/azure-static-web-apps-victorious-mushroom-0cd000a10.yml"
+        },
+        {
+          "name": "Azure Static Web Apps CI/CD",
+          "sha": "3ea4145fed857819bee25c25818276efebceaaea",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43352666417",
+          "created": "2026-11-13T02:30:40Z",
+          "path": ".github/workflows/azure-static-web-apps-victorious-mushroom-0cd000a10.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": [
+        {
+          "name": "Build and Deploy Job",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build Azure/static-web-apps-deploy@v1",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup Node.js",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Lint",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verificar tipos",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build And Deploy",
+              "conclusion": "success"
+            },
+            {
+              "name": "Crear tag y release",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Setup Node.js",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v3",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43628127740/job/132548500347"
+        },
+        {
+          "name": "Close Pull Request Job",
+          "conclusion": "skipped",
+          "steps": [],
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-web/actions/runs/43628127740/job/132548501447"
+        }
+      ]
+    },
+    {
+      "repositorio": "cvexpert-docs",
+      "main": "61039b25ec18681ed8ff5ddfca326806e62c5c88",
+      "develop": null,
+      "prs_abiertos": [
+        {
+          "number": 5,
+          "title": "docs: documentación de arquitectura de la Fase II",
+          "head": "docs/arquitectura",
+          "sha": "aa99f6420b7dfa162fa72d3e888659fcd2696f09",
+          "base": "main",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/5",
+          "draft": false
+        },
+        {
+          "number": 1,
+          "title": "docs: consolidar contratos OpenAPI de los cinco microservicios",
+          "head": "docs/consolidacion-openapi-20261020",
+          "sha": "54a2c23a4ed78c5458985e0a08b40a1bb8912818",
+          "base": "main",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/1",
+          "draft": true
+        }
+      ],
+      "acciones_main_consultadas": [
+        {
+          "name": "Validar documentación CVExpert",
+          "sha": "61039b25ec18681ed8ff5ddfca326806e62c5c88",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/actions/runs/43890066845",
+          "created": "2026-11-16T14:50:53Z",
+          "path": ".github/workflows/validar-documentacion.yml"
+        },
+        {
+          "name": "Validar documentación CVExpert",
+          "sha": "e1a9efa04f50aef6177a8cbc6d69163828238c05",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/actions/runs/43889992794",
+          "created": "2026-11-16T14:50:28Z",
+          "path": ".github/workflows/validar-documentacion.yml"
+        },
+        {
+          "name": "Validar documentación CVExpert",
+          "sha": "d699130ccf1542df4f1040279f1352d598d17b0f",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/actions/runs/42545604310",
+          "created": "2026-11-09T01:26:40Z",
+          "path": ".github/workflows/validar-documentacion.yml"
+        }
+      ],
+      "jobs_despliegue_consultados": []
+    }
+  ],
+  "prs_docs_verificados": [
+    {
+      "numero": 5,
+      "estado": "open",
+      "borrador": false,
+      "fusionado_el": null,
+      "head": "aa99f6420b7dfa162fa72d3e888659fcd2696f09",
+      "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/5"
+    },
+    {
+      "numero": 4,
+      "estado": "closed",
+      "borrador": false,
+      "fusionado_el": "2026-11-16T14:50:50Z",
+      "head": "fc190fa13a5afe52ef120342d24afddff8abea03",
+      "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/4"
+    },
+    {
+      "numero": 3,
+      "estado": "closed",
+      "borrador": false,
+      "fusionado_el": "2026-11-16T14:50:25Z",
+      "head": "24b7386e7e45ffa642b078ecda8d82ea69de4ffa",
+      "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/3"
+    },
+    {
+      "numero": 2,
+      "estado": "closed",
+      "borrador": false,
+      "fusionado_el": "2026-11-09T01:26:38Z",
+      "head": "6588bc0cc20e8c822de665b51bfc660782f2ba54",
+      "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/2"
+    },
+    {
+      "numero": 1,
+      "estado": "open",
+      "borrador": true,
+      "fusionado_el": null,
+      "head": "54a2c23a4ed78c5458985e0a08b40a1bb8912818",
+      "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/1"
+    }
+  ],
+  "alcance_corte_original": "repositorios, base_docs y prs_docs_verificados conservan la consulta original anterior al merge de PR #5; no representan el estado actual de los PR. Ver reconciliacion.",
+  "reconciliacion": {
+    "fecha": "2026-11-16",
+    "main_integrado": "7457ce9b0b2abb22f46654147d745e1eac7347cf",
+    "rama_pr6_antes_del_merge": "00b8d5b84d4dfc3627bb66107b354c99a91a3e60",
+    "conflictos_reales": [
+      "docs/auditoria.md",
+      "docs/estado-entrega.md",
+      "docs/plan-pruebas.md",
+      "postman/README.md"
+    ],
+    "prs_docs_verificados": [
+      {
+        "numero": 1,
+        "estado": "open",
+        "borrador": true,
+        "fusionado_el": null,
+        "merge_commit": null,
+        "head": "54a2c23a4ed78c5458985e0a08b40a1bb8912818",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/1"
+      },
+      {
+        "numero": 3,
+        "estado": "closed",
+        "borrador": false,
+        "fusionado_el": "2026-11-16T14:50:25Z",
+        "merge_commit": "e1a9efa04f50aef6177a8cbc6d69163828238c05",
+        "head": "24b7386e7e45ffa642b078ecda8d82ea69de4ffa",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/3"
+      },
+      {
+        "numero": 4,
+        "estado": "closed",
+        "borrador": false,
+        "fusionado_el": "2026-11-16T14:50:50Z",
+        "merge_commit": "61039b25ec18681ed8ff5ddfca326806e62c5c88",
+        "head": "fc190fa13a5afe52ef120342d24afddff8abea03",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/4"
+      },
+      {
+        "numero": 5,
+        "estado": "closed",
+        "borrador": false,
+        "fusionado_el": "2026-11-16T15:49:20Z",
+        "merge_commit": "7457ce9b0b2abb22f46654147d745e1eac7347cf",
+        "head": "2e6797158a7dc5b909bb280e565a3b81de3d55d9",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/5"
+      },
+      {
+        "numero": 6,
+        "estado": "open",
+        "borrador": false,
+        "fusionado_el": null,
+        "merge_commit": null,
+        "head": "00b8d5b84d4dfc3627bb66107b354c99a91a3e60",
+        "url": "https://github.com/SoftwareDesignTEC/cvexpert-docs/pull/6"
+      }
+    ],
+    "nota": "Consulta de GitHub y reconciliación documental; sin reauditar main de los otros siete repositorios ni ejecutar E2E. PR #43 Android integra FCM en 0.9.5 y declara push real pendiente."
+  }
+}
